@@ -25,7 +25,6 @@
     "multer-ftp": "^1.2.0",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
-    "request": "0.0.1",
     "request-promise": "^0.0.1",
     "sequelize": "^6.37.3"
   }

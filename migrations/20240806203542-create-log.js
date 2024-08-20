@@ -1,37 +1,41 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
+const { DataTypes } = require('sequelize');
+
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.createTable('log', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false
       },
       entity: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING
       },
       method: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING
       },
       error: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING
       },
       payload: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING
       },
       createdAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
       },
       updatedAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
       }
     });
   },
-  async down(queryInterface, Sequelize) {
+
+  async down(queryInterface) {
     await queryInterface.dropTable('log');
   }
 };

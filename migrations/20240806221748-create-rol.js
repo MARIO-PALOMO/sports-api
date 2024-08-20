@@ -1,31 +1,38 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
+const { DataTypes } = require('sequelize');
+
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('rols', {
+  up: async (queryInterface) => {
+    await queryInterface.createTable('rol', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
       },
       name: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING,
+        allowNull: false, // Asegura que el nombre no sea nulo
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        allowNull: false, // Asegura que el estado activo no sea nulo
+        defaultValue: true, // Proporciona un valor por defecto si se necesita
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: DataTypes.DATE,
+      },
     });
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('rols');
-  }
+
+  down: async (queryInterface) => {
+    await queryInterface.dropTable('rol');
+  },
 };

@@ -1,64 +1,68 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
+
+const { DataTypes } = require('sequelize');
+
+/** 
+ * @type {import('sequelize-cli').Migration} 
+ */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.createTable('sanctions', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false
       },
       player_id: {
-        type: Sequelize.UUID,
+        type: DataTypes.UUID,
         references: {
-          model: 'players', // Referencia a la tabla 'rol'
-          key: 'id',
+          model: 'players',
+          key: 'id'
         },
-        allowNull: false, // Asegura que siempre haya un rol asociado
-        onUpdate: 'CASCADE', // Actualización en cascada
-        onDelete: 'SET NULL', // Establece NULL en caso de eliminación del rol asociado
+        allowNull: false,
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       sanction_type_id: {
-        type: Sequelize.UUID,
+        type: DataTypes.UUID,
         references: {
-          model: 'sanction_types', 
-          key: 'id',
+          model: 'sanction_types',
+          key: 'id'
         },
-        allowNull: false, 
+        allowNull: false,
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL', 
+        onDelete: 'SET NULL'
       },
       match_id: {
-        type: Sequelize.UUID,
+        type: DataTypes.UUID,
         references: {
-          model: 'matches', // Referencia a la tabla 'rol'
-          key: 'id',
+          model: 'matches',
+          key: 'id'
         },
-        allowNull: false, // Asegura que siempre haya un rol asociado
-        onUpdate: 'CASCADE', // Actualización en cascada
-        onDelete: 'SET NULL', // Establece NULL en caso de eliminación del rol asociado
+        allowNull: false,
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
       },
       created_at: {
-        type: Sequelize.DATE
-      },
-      update_at: {
-        type: Sequelize.DATE
-      },
-      createdAt: {
+        type: DataTypes.DATE,
         allowNull: false,
-        type: Sequelize.DATE
+        defaultValue: DataTypes.NOW
       },
-      updatedAt: {
+      updated_at: {
+        type: DataTypes.DATE,
         allowNull: false,
-        type: Sequelize.DATE
+        defaultValue: DataTypes.NOW
       }
     });
   },
-  async down(queryInterface, Sequelize) {
+
+  async down(queryInterface) {
     await queryInterface.dropTable('sanctions');
   }
 };

@@ -28,7 +28,7 @@
       }
     },
     "migrationStorageTableName": "migrations",
-    "apiUrl": "https://sports-api-c43e1b5f868a.herokuapp.com/",
+    "apiUrl": "https://sports-api-c43e1b5f868a.herokuapp.com/api",
     "apiEnvironment": "Pruebas"
   },
   "test": {

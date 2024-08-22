@@ -10,7 +10,7 @@ module.exports = {
             const fields = await Field.findAll();
             return res.status(200).json({ message: 'Canchas deportivas encontradas', data: fields });
         } catch (error) {
-            console.error('Error al consultar todas las canchas:', error);
+            clog.addLocal("field.controller", "getAll", 'Error al consultar las canchas deportivas: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar las canchas deportivas: ' + error });
         }
     },
@@ -30,7 +30,7 @@ module.exports = {
             // Responder con el registro encontrado
             return res.status(200).json({ message: 'Cancha Deportiva encontrada', data: field });
         } catch (error) {
-            console.error('Error al consultar cancha por ID:', error);
+            clog.addLocal("field.controller", "getFieldById", 'Error al consultar cancha deportivas: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar cancha deportivas: ' + error });
         }
     },

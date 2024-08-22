@@ -9,7 +9,7 @@ module.exports = {
             const competitions = await Competition.findAll();
             return res.status(200).json({ message: 'Campeonatos encontradas', data: competitions });
         } catch (error) {
-            clog.addLocal('competition.controller', 'getAllCompetitions', 'Error al consultar competitions: ' + error);
+            clog.addLocal('competition.controller', 'getAllCompetitions', 'Error al consultar competiciones: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar competitions: ' + error });
         }
     },
@@ -24,7 +24,7 @@ module.exports = {
             }
             return res.status(200).json({ message: 'Campeonato encontrado', data: competition });
         } catch (error) {
-            clog.addLocal('competition.controller', 'getCompetitionById', 'Error al consultar competition: ' + error);
+            clog.addLocal('competition.controller', 'getCompetitionById', 'Error al consultar competicion: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar competicion: ' + error });
         }
     },
@@ -35,7 +35,7 @@ module.exports = {
             const competition = await Competition.create(req.body);
             return res.status(201).json({ message: 'Campeonato creado con éxito', data: competition });
         } catch (error) {
-            clog.addLocal('competition.controller', 'addCompetition', 'Error al crear competition: ' + error, JSON.stringify(req.body));
+            clog.addLocal('competition.controller', 'addCompetition', 'Error al crear competicion: ' + error, JSON.stringify(req.body));
             return res.status(500).json({ data: null, message: 'Error al crear competicion: ' + error });
         }
     },
@@ -54,7 +54,7 @@ module.exports = {
             await competition.update({ name, description, organizer });
             return res.status(200).json({ message: 'Detalles actualizados con éxito', data: competition });
         } catch (error) {
-            clog.addLocal('competition.controller', 'updateCompetitionDetails', 'Error al actualizar competition: ' + error);
+            clog.addLocal('competition.controller', 'updateCompetitionDetails', 'Error al actualizar competition: ' + error, JSON.stringify(req.body));
             return res.status(500).json({ data: null, message: 'Error al actualizar competition: ' + error });
         }
     },
@@ -73,7 +73,7 @@ module.exports = {
             await competition.update({ start_date, end_date });
             return res.status(200).json({ message: 'Fechas actualizadas con éxito', data: competition });
         } catch (error) {
-            clog.addLocal('competition.controller', 'updateCompetitionDates', 'Error al actualizar fechas: ' + error);
+            clog.addLocal('competition.controller', 'updateCompetitionDates', 'Error al actualizar fechas: ' + error, JSON.stringify(req.body));
             return res.status(500).json({ data: null, message: 'Error al actualizar fechas: ' + error });
         }
     },
@@ -92,7 +92,7 @@ module.exports = {
             await competition.update({ logo });
             return res.status(200).json({ message: 'Logo actualizado con éxito', data: competition });
         } catch (error) {
-            clog.addLocal('competition.controller', 'updateCompetitionLogo', 'Error al actualizar logo: ' + error);
+            clog.addLocal('competition.controller', 'updateCompetitionLogo', 'Error al actualizar logo: ' + error, JSON.stringify(req.body));
             return res.status(500).json({ data: null, message: 'Error al actualizar logo: ' + error });
         }
     },
@@ -110,7 +110,7 @@ module.exports = {
             await competition.update(req.body);
             return res.status(200).json({ message: 'Información actualizada con éxito', data: competition });
         } catch (error) {
-            clog.addLocal('competition.controller', 'updateCompetitionInfo', 'Error al actualizar competition: ' + error);
+            clog.addLocal('competition.controller', 'updateCompetitionInfo', 'Error al actualizar competition: ' + error, JSON.stringify(req.body));
             return res.status(500).json({ data: null, message: 'Error al actualizar competition: ' + error });
         }
     }

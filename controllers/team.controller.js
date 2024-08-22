@@ -10,7 +10,7 @@ module.exports = {
       const teams = await Team.findAll();
       return res.status(200).json({ message: 'Equipos encontrados', data: teams });
     } catch (error) {
-      console.error('Error al consultar los equipos:', error);
+      clog.addLocal('team.controller', 'getAll', 'Error al consultar los equipos: ' + error, JSON.stringify(req));
       return res.status(500).json({ data: null, message: 'Error al consultar equipos: ' + error.message });
     }
   },
@@ -22,7 +22,7 @@ module.exports = {
       if (!team) return res.status(404).json({ message: 'Equipo no encontrado', data: null });
       return res.status(200).json({ message: 'Equipo encontrado', data: team });
     } catch (error) {
-      console.error('Error al consultar el equipo:', error);
+      clog.addLocal('team.controller', 'getTeamById', 'Error al consultar el equipo: ' + error, JSON.stringify(req));
       return res.status(500).json({ data: null, message: 'Error al consultar equipo: ' + error.message });
     }
   },
@@ -34,7 +34,7 @@ module.exports = {
       const newTeam = await Team.create({ ...req.body, logo });
       return res.status(201).json({ message: 'Equipo creado exitosamente', data: newTeam });
     } catch (error) {
-      console.error('Error al crear el equipo:', error);
+      clog.addLocal('team.controller', 'addTeam', 'Error al crear el equipo: ' + error, JSON.stringify(req));
       return res.status(500).json({ data: null, message: 'Error al crear equipo: ' + error.message });
     }
   },
@@ -46,7 +46,7 @@ module.exports = {
       const newTeams = await Team.bulkCreate(teamsData);
       return res.status(201).json({ message: 'Equipos creados exitosamente', data: newTeams });
     } catch (error) {
-      console.error('Error al crear los equipos:', error);
+      clog.addLocal('team.controller', 'addMultipleTeams', 'Error al crear los equipos: ' + error, JSON.stringify(req));
       return res.status(500).json({ data: null, message: 'Error al crear equipos: ' + error.message });
     }
   },
@@ -65,7 +65,7 @@ module.exports = {
       await team.update({ name, coach });
       return res.status(200).json({ message: 'Detalles actualizados con éxito', data: team });
     } catch (error) {
-      clog.addLocal('team.controller', 'updateTeamDetails', 'Error al actualizar detalles del equipo: ' + error);
+      clog.addLocal('team.controller', 'updateTeamDetails', 'Error al actualizar detalles del equipo: ' + error, JSON.stringify(req.body));
       return res.status(500).json({ data: null, message: 'Error al actualizar detalles del equipo: ' + error });
     }
   },
@@ -84,7 +84,7 @@ module.exports = {
       await team.update({ logo });
       return res.status(200).json({ message: 'Logo actualizado con éxito', data: team });
     } catch (error) {
-      clog.addLocal('team.controller', 'updateTeamLogo', 'Error al actualizar logo: ' + error);
+      clog.addLocal('team.controller', 'updateTeamLogo', 'Error al actualizar logo: ' + error, JSON.stringify(req.body));
       return res.status(500).json({ data: null, message: 'Error al actualizar logo: ' + error });
     }
   },
@@ -103,7 +103,7 @@ module.exports = {
 
       return res.status(200).json({ message: 'Equipo actualizado exitosamente', data: team });
     } catch (error) {
-      console.error('Error al actualizar el equipo:', error);
+      clog.addLocal('team.controller', 'updateTeamInfo', 'Error al actualizar el equipo: ' + error, JSON.stringify(req));
       return res.status(500).json({ data: null, message: 'Error al actualizar equipo: ' + error.message });
     }
   },
@@ -116,7 +116,7 @@ module.exports = {
       if (!deleted) return res.status(404).json({ message: 'Equipo no encontrado', data: null });
       return res.status(200).json({ message: 'Equipo eliminado exitosamente', data: null });
     } catch (error) {
-      console.error('Error al eliminar el equipo:', error);
+      clog.addLocal('team.controller', 'deleteTeam', 'Error al eliminar el equipo: ' + error, JSON.stringify(req));
       return res.status(500).json({ data: null, message: 'Error al eliminar equipo: ' + error.message });
     }
   },

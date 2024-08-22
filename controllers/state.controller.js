@@ -10,7 +10,7 @@ module.exports = {
             const states = await State.findAll();
             return res.status(200).json({ message: 'Estado de juego encontrados', data: states });
         } catch (error) {
-            console.error('Error al consultar los estados de juego:', error);
+            clog.addLocal("state.controller", "getAll", 'Error al consultar los estados de juego: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar states: ' + error });
         }
     },
@@ -24,13 +24,13 @@ module.exports = {
             const state = await State.findByPk(id);
 
             if (!state) {
-                return res.status(404).json({ message: 'State no encontrado' });
+                return res.status(404).json({ message: 'State no encontrado', data: null });
             }
 
             // Responder con el registro encontrado
             return res.status(200).json({ message: 'State encontrado', data: state });
         } catch (error) {
-            console.error('Error al consultar states por ID:', error);
+            clog.addLocal("state.controller", "getStateById", 'Error al consultar states por ID: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar states: ' + error });
         }
     },

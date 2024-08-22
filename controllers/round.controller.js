@@ -10,7 +10,7 @@ module.exports = {
             const rounds = await Round.findAll();
             return res.status(200).json({ message: 'Eliminatorias encontradas', data: rounds });
         } catch (error) {
-            console.error('Error al consultar todas las eliminatorias:', error);
+            clog.addLocal("round.controller", "addRound", 'Error al consultar todas las eliminatorias: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar los registros de eliminatorias: ' + error });
         }
     },
@@ -21,11 +21,11 @@ module.exports = {
             const { id } = req.params;
             const round = await Round.findByPk(id);
             if (!round) {
-                return res.status(404).json({ message: 'Eliminatoria no encontrado' });
+                return res.status(404).json({ message: 'Eliminatoria no encontrado', data: null });
             }
             return res.status(200).json({ message: 'Eliminatoria encontrada', data: round });
         } catch (error) {
-            console.error('Error al consultar la eliminatoria por ID:', error);
+            clog.addLocal("round.controller", "addRound", 'Error al consultar la eliminatoria por ID: ' + error, JSON.stringify(req));
             return res.status(500).json({ data: null, message: 'Error al consultar eliminatoria: ' + error });
         }
     },

@@ -8,10 +8,10 @@
     "migrationStorageTableName":"migrations"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
+    "username": "ubdgbui0lesc38",
+    "password": "p7d47642e0c73abe66813259367f6f848b52f91b355a7b47dfd086da4c3e53799",
+    "database": "d67glj9qaothhl",
+    "host": "c5flugvup2318r.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com",
     "dialect": "postgres",
     "migrationStorageTableName":"migrations"
   },

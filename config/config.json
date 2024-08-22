@@ -15,7 +15,7 @@
     "apiUrl": "http://localhost:3105/api",
     "apiEnvironment": "Desarrollo"
   },
-  "test": {
+  "production": {
     "username": "ubdgbui0lesc38",
     "password": "p7d47642e0c73abe66813259367f6f848b52f91b355a7b47dfd086da4c3e53799",
     "database": "d67glj9qaothhl",
@@ -31,7 +31,7 @@
     "apiUrl": "https://sports-api-c43e1b5f868a.herokuapp.com/",
     "apiEnvironment": "Pruebas"
   },
-  "production": {
+  "test": {
     "username": "root",
     "password": null,
     "database": "database_production",

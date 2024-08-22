@@ -1,4 +1,9 @@
 const swaggerJSDoc = require('swagger-jsdoc');
+const config = require('./config/config.json');
+
+const environment = process.env.NODE_ENV || 'development';
+const apiUrl = config[environment].apiUrl;
+const apiEnvironment = config[environment].apiEnvironment;
 
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -9,17 +14,16 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:3105/api', // Base URL para las rutas de tu API
-      description: 'Servidor de Desarrollo',
+      url: apiUrl,
+      description: 'Servidor de ' + apiEnvironment,
     },
   ],
 };
 
 const options = {
   swaggerDefinition,
-  apis: ['./router.js'], // Ajusta el patrón para coincidir con la ubicación de tus rutas
+  apis: ['./router.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
-
 module.exports = swaggerSpec;

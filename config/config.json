@@ -5,7 +5,15 @@
     "database": "sportsdb",
     "host": "localhost",
     "dialect": "postgres",
-    "migrationStorageTableName":"migrations"
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    },
+    "migrationStorageTableName": "migrations",
+    "apiUrl": "http://localhost:3105/api",
+    "apiEnvironment": "Desarrollo"
   },
   "test": {
     "username": "ubdgbui0lesc38",
@@ -13,7 +21,15 @@
     "database": "d67glj9qaothhl",
     "host": "c5flugvup2318r.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com",
     "dialect": "postgres",
-    "migrationStorageTableName":"migrations"
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    },
+    "migrationStorageTableName": "migrations",
+    "apiUrl": "https://sports-api-c43e1b5f868a.herokuapp.com/",
+    "apiEnvironment": "Pruebas"
   },
   "production": {
     "username": "root",
@@ -21,6 +37,14 @@
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "migrationStorageTableName":"migrations"
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    },
+    "migrationStorageTableName": "migrations",
+    "apiUrl": "http://localhost:3105/api",
+    "apiEnvironment": "Producción"
   }
 }

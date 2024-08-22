@@ -35,6 +35,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Get the environment from the NODE_ENV environment variable, defaulting to 'development'
 const env = process.env.NODE_ENV || 'development';
+console.log('Environment: ' + env);
 const dbConfig = config[env];
 
 // Create Sequelize instance
@@ -55,7 +56,7 @@ sequelize
 	.catch(err => {
 		console.error('Unable to connect to the database:', err);
 	});
-	
+
 // Preload images at application startup
 preloadImages();
 

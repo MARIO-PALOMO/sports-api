@@ -3,6 +3,7 @@ const config = require('./config/config.json');
 const router = require("./router");
 const Sequelize = require("sequelize");
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerOptions');

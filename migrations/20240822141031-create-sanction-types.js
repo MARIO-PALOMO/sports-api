@@ -1,40 +1,58 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
+
+const { DataTypes } = require('sequelize');
+
+/** 
+ * @type {import('sequelize-cli').Migration} 
+ */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.createTable('sanction_types', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false
       },
       name: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: {
+            args: [1, 255],
+            msg: 'El nombre debe tener entre 1 y 255 caracteres',
+          },
+        },
       },
       description: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          len: {
+            args: [0, 500],
+            msg: 'La descripción debe tener hasta 500 caracteres',
+          },
+        },
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
       },
       created_at: {
-        type: Sequelize.DATE
-      },
-      update_at: {
-        type: Sequelize.DATE
-      },
-      createdAt: {
+        type: DataTypes.DATE,
         allowNull: false,
-        type: Sequelize.DATE
+        defaultValue: DataTypes.NOW,
       },
-      updatedAt: {
+      updated_at: {
+        type: DataTypes.DATE,
         allowNull: false,
-        type: Sequelize.DATE
+        defaultValue: DataTypes.NOW,
       }
     });
   },
-  async down(queryInterface, Sequelize) {
+
+  async down(queryInterface) {
     await queryInterface.dropTable('sanction_types');
   }
 };

@@ -34,7 +34,11 @@ module.exports = {
         type: DataTypes.DATE,
         allowNull: true // Permite nulos si la fecha de finalización no siempre está disponible
       },
-      logo: {
+      logo_1: {
+        type: DataTypes.TEXT,
+        allowNull: true // Permite nulos si el logo no siempre está disponible
+      },
+      logo_2: {
         type: DataTypes.TEXT,
         allowNull: true // Permite nulos si el logo no siempre está disponible
       },

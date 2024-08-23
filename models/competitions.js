@@ -68,7 +68,11 @@ module.exports = (sequelize) => {
         },
       },
     },
-    logo: {
+    logo_1: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    logo_2: {
       type: DataTypes.TEXT,
       allowNull: true,
     }

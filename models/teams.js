@@ -3,6 +3,11 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Team extends Model {
     static associate(models) {
+      // Relación uno a muchos: Un equipo tiene muchos jugadores
+      this.hasMany(models.Player, {
+        foreignKey: 'team_id',  // La clave foránea en el modelo Player que apunta al equipo
+        as: 'players',          // Alias para la relación
+      });
     }
   }
 

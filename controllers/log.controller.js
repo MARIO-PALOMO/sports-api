@@ -50,7 +50,7 @@ exports.addLocal = async (entity, method, error, payload) => {
             error,
             payload
         });
-        
+
     } catch (error) {
         console.log('Error', error);
     }

@@ -11,7 +11,7 @@ module.exports = {
       return res.status(200).json({ message: 'Equipos encontrados', data: teams });
     } catch (error) {
       clog.addLocal('team.controller', 'getAll', 'Error al consultar los equipos: ' + error, JSON.stringify(req));
-      return res.status(500).json({ data: null, message: 'Error al consultar equipos: ' + error.message });
+      return res.status(500).json({ data: null, message: 'Error al consultar equipos: ' + error });
     }
   },
 
@@ -23,7 +23,7 @@ module.exports = {
       return res.status(200).json({ message: 'Equipo encontrado', data: team });
     } catch (error) {
       clog.addLocal('team.controller', 'getTeamById', 'Error al consultar el equipo: ' + error, JSON.stringify(req));
-      return res.status(500).json({ data: null, message: 'Error al consultar equipo: ' + error.message });
+      return res.status(500).json({ data: null, message: 'Error al consultar equipo: ' + error });
     }
   },
 
@@ -32,10 +32,10 @@ module.exports = {
     try {
       const logo = getRandomLogo();
       const newTeam = await Team.create({ ...req.body, logo });
-      return res.status(201).json({ message: 'Equipo creado exitosamente', data: newTeam });
+      return res.status(200).json({ message: 'Equipo creado exitosamente', data: newTeam });
     } catch (error) {
       clog.addLocal('team.controller', 'addTeam', 'Error al crear el equipo: ' + error, JSON.stringify(req));
-      return res.status(500).json({ data: null, message: 'Error al crear equipo: ' + error.message });
+      return res.status(500).json({ data: null, message: 'Error al crear equipo: ' + error });
     }
   },
 
@@ -44,10 +44,10 @@ module.exports = {
     try {
       const teamsData = req.body.map(team => ({ ...team, logo: getRandomLogo() }));
       const newTeams = await Team.bulkCreate(teamsData);
-      return res.status(201).json({ message: 'Equipos creados exitosamente', data: newTeams });
+      return res.status(200).json({ message: 'Equipos creados exitosamente', data: newTeams });
     } catch (error) {
       clog.addLocal('team.controller', 'addMultipleTeams', 'Error al crear los equipos: ' + error, JSON.stringify(req));
-      return res.status(500).json({ data: null, message: 'Error al crear equipos: ' + error.message });
+      return res.status(500).json({ data: null, message: 'Error al crear equipos: ' + error });
     }
   },
 
@@ -104,7 +104,7 @@ module.exports = {
       return res.status(200).json({ message: 'Equipo actualizado exitosamente', data: team });
     } catch (error) {
       clog.addLocal('team.controller', 'updateTeamInfo', 'Error al actualizar el equipo: ' + error, JSON.stringify(req));
-      return res.status(500).json({ data: null, message: 'Error al actualizar equipo: ' + error.message });
+      return res.status(500).json({ data: null, message: 'Error al actualizar equipo: ' + error });
     }
   },
 
@@ -117,7 +117,7 @@ module.exports = {
       return res.status(200).json({ message: 'Equipo eliminado exitosamente', data: null });
     } catch (error) {
       clog.addLocal('team.controller', 'deleteTeam', 'Error al eliminar el equipo: ' + error, JSON.stringify(req));
-      return res.status(500).json({ data: null, message: 'Error al eliminar equipo: ' + error.message });
+      return res.status(500).json({ data: null, message: 'Error al eliminar equipo: ' + error });
     }
   },
 };

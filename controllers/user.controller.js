@@ -34,11 +34,11 @@ exports.get = async (req, res, next) => {
                     attributes: ['id', 'name'],
                 },
             ],
-            where:{
+            where: {
                 mail: req.body?.mail,
                 password: req.body?.password
             }
-        })  
+        })
 
         var result = users.length > 0 ? users[0] : null;
 

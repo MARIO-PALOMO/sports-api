@@ -33,7 +33,7 @@ module.exports = {
     async addCompetition(req, res) {
         try {
             const competition = await Competition.create(req.body);
-            return res.status(201).json({ message: 'Campeonato creado con éxito', data: competition });
+            return res.status(200).json({ message: 'Campeonato creado con éxito', data: competition });
         } catch (error) {
             clog.addLocal('competition.controller', 'addCompetition', 'Error al crear competicion: ' + error, JSON.stringify(req.body));
             return res.status(500).json({ data: null, message: 'Error al crear competicion: ' + error });
@@ -79,21 +79,21 @@ module.exports = {
     },
 
     // Actualizar campo logo por ID
-    async updateCompetitionLogo(req, res) {
+    async updateCompetitionLogos(req, res) {
         try {
             const { id } = req.params;
-            const { logo } = req.body;
+            const { logo_1, logo_2 } = req.body;
             const competition = await Competition.findByPk(id);
 
             if (!competition) {
                 return res.status(404).json({ data: null, message: 'Campeonato no encontrado' });
             }
 
-            await competition.update({ logo });
-            return res.status(200).json({ message: 'Logo actualizado con éxito', data: competition });
+            await competition.update({ logo_1, logo_2 });
+            return res.status(200).json({ message: 'Logos actualizado con éxito', data: competition });
         } catch (error) {
-            clog.addLocal('competition.controller', 'updateCompetitionLogo', 'Error al actualizar logo: ' + error, JSON.stringify(req.body));
-            return res.status(500).json({ data: null, message: 'Error al actualizar logo: ' + error });
+            clog.addLocal('competition.controller', 'updateCompetitionLogos', 'Error al actualizar logos: ' + error, JSON.stringify(req.body));
+            return res.status(500).json({ data: null, message: 'Error al actualizar logos: ' + error });
         }
     },
 

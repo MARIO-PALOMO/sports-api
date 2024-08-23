@@ -1438,6 +1438,23 @@ router.get('/players/getAll', cplayer.getAllPlayers);
  *                   example: Jugador encontrado
  *                 data:
  *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     document_number:
+ *                       type: string
+ *                     birthdate:
+ *                       type: string
+ *                       format: date
+ *                     player_number:
+ *                       type: integer
+ *                     team_id:
+ *                       type: string
+ *                     photo:
+ *                       type: string
+ *                       format: byte
  *       404:
  *         description: Jugador no encontrado
  *         content:
@@ -1482,6 +1499,33 @@ router.get('/players/:id', cplayer.getPlayerById);
  *                   type: array
  *                   items:
  *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       document_number:
+ *                         type: string
+ *                       birthdate:
+ *                         type: string
+ *                         format: date
+ *                       player_number:
+ *                         type: integer
+ *                       team_id:
+ *                         type: string
+ *                       photo:
+ *                         type: string
+ *                         format: byte
+ *                       team:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           logo:
+ *                             type: string
+ *                             format: byte
  *       500:
  *         description: Error al consultar jugadores con equipos
  *         content:
@@ -1532,6 +1576,23 @@ router.get('/players/getAllPlayersWithTeams', cplayer.getAllPlayersWithTeams);
  *                   example: Jugador creado exitosamente
  *                 data:
  *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     document_number:
+ *                       type: string
+ *                     birthdate:
+ *                       type: string
+ *                       format: date
+ *                     player_number:
+ *                       type: integer
+ *                     team_id:
+ *                       type: string
+ *                     photo:
+ *                       type: string
+ *                       format: byte
  *       400:
  *         description: Error al crear jugador
  *         content:
@@ -1586,6 +1647,23 @@ router.post('/players/addPlayer', cplayer.addPlayer);
  *                   type: array
  *                   items:
  *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       document_number:
+ *                         type: string
+ *                       birthdate:
+ *                         type: string
+ *                         format: date
+ *                       player_number:
+ *                         type: integer
+ *                       team_id:
+ *                         type: string
+ *                       photo:
+ *                         type: string
+ *                         format: byte
  *       400:
  *         description: Error al crear jugadores
  *         content:

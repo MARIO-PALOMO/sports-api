@@ -8,9 +8,18 @@ const { Sequelize } = require('sequelize');
 const defaultPhotoPath = path.resolve(__dirname, '..', 'images', 'players', 'player_default.png');
 
 // Función para cargar la foto predeterminada en base64
-const loadDefaultPhoto = () => fs.readFileSync(defaultPhotoPath, { encoding: 'base64' });
+const loadDefaultPhoto = () => {
+    try {
+        return fs.readFileSync(defaultPhotoPath, { encoding: 'base64' });
+    } catch (error) {
+        console.error(`Error al cargar la foto predeterminada: ${error}`);
+        // Devolver un valor por defecto en caso de error, como una cadena vacía o un placeholder base64
+        return null; // o podrías devolver una imagen en base64 por defecto
+    }
+};
 
 module.exports = {
+
     // Consulta de todos los jugadores
     async getAllPlayers(req, res) {
         try {
@@ -57,17 +66,29 @@ module.exports = {
     async addPlayer(req, res) {
         const { name, document_number, birthdate, player_number, team_id } = req.body;
         try {
+            const defaultPhoto = loadDefaultPhoto();
+            if (!defaultPhoto) {
+                return res.status(500).json({ data: null, error: 'Error al cargar la foto predeterminada.' });
+            }
+
             const player = await Player.create({
                 name,
                 document_number,
                 birthdate,
                 player_number,
                 team_id,
-                photo: loadDefaultPhoto(),
+                photo: defaultPhoto,
             });
+
             return res.status(200).json({ message: 'Jugador creado exitosamente', data: player });
         } catch (error) {
-            clog.addLocal('player.controller', 'addPlayer', `Error al consumir addPlayer: ${error}`, JSON.stringify(req));
+            // Loguear solo partes relevantes del req para evitar el error de referencia circular
+            const logData = {
+                method: req.method,
+                body: req.body,
+                url: req.originalUrl,
+            };
+            clog.addLocal('player.controller', 'addPlayer', `Error al consumir addPlayer: ${error}`, JSON.stringify(logData));
             return res.status(400).json({ data: null, error: `Error al crear jugador: ${error}` });
         }
     },
@@ -76,13 +97,40 @@ module.exports = {
     async addMultiplePlayers(req, res) {
         const playersData = req.body;
         try {
-            const players = await Promise.all(playersData.map(playerData => Player.create({
-                ...playerData,
-                photo: loadDefaultPhoto(),
-            })));
-            return res.status(200).json({ message: 'Jugadores creados exitosamente', data: players });
+            // Cargar la foto predeterminada una sola vez
+            const defaultPhoto = loadDefaultPhoto();
+            if (!defaultPhoto) {
+                return res.status(500).json({ data: null, error: 'Error al cargar la foto predeterminada.' });
+            }
+
+            const players = await Promise.all(playersData.map(async playerData => {
+                try {
+                    return await Player.create({
+                        ...playerData,
+                        photo: defaultPhoto,
+                    });
+                } catch (playerError) {
+                    // Manejar error individualmente
+                    clog.addLocal('player.controller', 'addMultiplePlayers', `Error al crear jugador: ${playerError}`, JSON.stringify(playerData));
+                    return null; // O manejar de otra manera según tus necesidades
+                }
+            }));
+
+            // Filtrar los jugadores que se crearon exitosamente
+            const successfulPlayers = players.filter(player => player !== null);
+
+            if (successfulPlayers.length === 0) {
+                return res.status(400).json({ data: null, error: 'No se pudo crear ningún jugador.' });
+            }
+
+            return res.status(200).json({ message: 'Jugadores creados exitosamente', data: successfulPlayers });
         } catch (error) {
-            clog.addLocal('player.controller', 'addMultiplePlayers', `Error al consumir addMultiplePlayers: ${error}`, JSON.stringify(req));
+            const logData = {
+                method: req.method,
+                body: req.body,
+                url: req.originalUrl,
+            };
+            clog.addLocal('player.controller', 'addMultiplePlayers', `Error al consumir addMultiplePlayers: ${error}`, JSON.stringify(logData));
             return res.status(400).json({ data: null, error: `Error al crear jugadores: ${error}` });
         }
     },

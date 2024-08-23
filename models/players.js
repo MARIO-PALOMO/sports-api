@@ -3,11 +3,11 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Player extends Model {
     static associate(models) {
-      //// Un jugador pertenece a un equipo
-      // this.belongsTo(models.Team, {
-      //   foreignKey: 'team_id',
-      //   as: 'team',
-      // });
+      // Relación uno a muchos: Un jugador pertenece a un equipo
+      this.belongsTo(models.Team, {
+        foreignKey: 'team_id',  // Clave foránea que conecta al equipo
+        as: 'team',             // Alias para la relación
+      });
     }
   }
 

@@ -1,9 +1,11 @@
+require('dotenv').config();
+
 const express = require("express");
 const config = require('./config/config.json');
 const router = require("./router");
 const Sequelize = require("sequelize");
 const bodyParser = require('body-parser');
-require('dotenv').config();
+const path = require('path');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerOptions');
@@ -32,6 +34,16 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/static', express.static(path.join(__dirname, 'images')));
+app.get('/pdf/premios-copa-wambras', (req, res) => {
+    const filePath = path.join(__dirname, 'images/documents/premios_copa_wambras.pdf');
+    res.sendFile(filePath);
+});
+app.get('/pdf/reglamento-copa-wambras', (req, res) => {
+    const filePath = path.join(__dirname, 'images/documents/reglamento_copa_wambras.pdf');
+    res.sendFile(filePath);
+});
+
 
 // Get the environment from the NODE_ENV environment variable, defaulting to 'development'
 const env = process.env.NODE_ENV || 'development';

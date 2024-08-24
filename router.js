@@ -1493,36 +1493,91 @@ router.get('/players/getAll', cplayer.getAllPlayers);
 
 /**
  * @swagger
- * /players/getAllPlayersWithTeams:
+ * /players/{teamId}/getAllPlayersByTeamId:
  *   get:
- *     summary: Obtener todos los jugadores con la información del equipo
- *     tags: [Jugadores]
+ *     summary: Obtiene todos los jugadores de un equipo específico
+ *     description: Retorna una lista de todos los jugadores que pertenecen a un equipo específico, identificado por su ID.
+ *     tags:
+ *       - Jugadores
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         description: El ID del equipo para el cual se desean consultar los jugadores.
+ *         schema:
+ *           type: string
+ *           format: uuid
  *     responses:
  *       200:
- *         description: Jugadores encontrados
+ *         description: Lista de jugadores encontrados
  *         content:
  *           application/json:
- *             example:
- *               message: Jugadores encontrados
- *               data:
- *                 - id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
- *                   name: "John Doe"
- *                   document_number: "1234567890"
- *                   birthdate: "1990-01-01"
- *                   player_number: "10"
- *                   team:
- *                     id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
- *                     name: "Team A"
- *                     logo: "base64string"
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Jugadores encontrados
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         format: uuid
+ *                       name:
+ *                         type: string
+ *                       document_number:
+ *                         type: string
+ *                         nullable: true
+ *                       birthdate:
+ *                         type: string
+ *                         format: date
+ *                         nullable: true
+ *                       player_number:
+ *                         type: string
+ *                       active:
+ *                         type: boolean
+ *                       team:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             format: uuid
+ *                           name:
+ *                             type: string
+ *                           logo:
+ *                             type: string
+ *                             format: base64
+ *       404:
+ *         description: No se encontraron jugadores para este equipo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se encontraron jugadores para este equipo
+ *                 data:
+ *                   type: null
+ *                   example: null
  *       500:
- *         description: Error al consultar jugadores con equipos
+ *         description: Error interno del servidor
  *         content:
  *           application/json:
- *             example:
- *               data: null
- *               error: "Error al consultar jugadores con equipos"
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: null
+ *                   example: null
+ *                 error:
+ *                   type: string
+ *                   example: "Error al consultar jugadores por equipo."
  */
-router.get('/players/getAllPlayersWithTeams', cplayer.getAllPlayersWithTeams);
+router.get('/players/:teamId/getAllPlayersByTeamId', cplayer.getAllPlayersByTeamId);
 
 /**
  * @swagger

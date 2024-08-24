@@ -46,19 +46,28 @@ module.exports = {
         }
     },
 
-    // Consulta de todos los jugadores con la información del equipo
-    async getAllPlayersWithTeams(req, res) {
+    // Consulta de todos los jugadores de un equipo específico con la información del equipo
+    async getAllPlayersByTeamId(req, res) {
         try {
+            const { teamId } = req.params; // Obtener el ID del equipo desde los parámetros de la solicitud
+
             const players = await Player.findAll({
+                where: { team_id: teamId }, // Filtrar por el ID del equipo
                 include: {
                     model: Team,
                     as: 'team',
                 },
+                order: [['player_number', 'ASC']], // Ordenar por player_number de forma ascendente
             });
+
+            if (!players.length) {
+                return res.status(404).json({ message: 'No se encontraron jugadores para este equipo', data: null });
+            }
+
             return res.status(200).json({ message: 'Jugadores encontrados', data: players });
         } catch (error) {
-            clog.addLocal('player.controller', 'getAllPlayersWithTeams', `Error al consultar getAllPlayersWithTeams: ${error}`, JSON.stringify(req));
-            return res.status(500).json({ data: null, error: `Error al consultar jugadores con equipos: ${error}` });
+            clog.addLocal('player.controller', 'getAllPlayersByTeamId', `Error al consultar getAllPlayersByTeamId: ${error}`, JSON.stringify(req));
+            return res.status(500).json({ data: null, error: `Error al consultar jugadores por equipo: ${error}` });
         }
     },
 

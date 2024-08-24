@@ -43,20 +43,11 @@ module.exports = (sequelize) => {
     },
     document_number: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: { msg: 'El número de documento es requerido' },
-        notEmpty: { msg: 'El número de documento no puede estar vacío' },
-        isAlphanumeric: { msg: 'El número de documento solo puede contener letras y números' },
-      },
+      allowNull: true
     },
     birthdate: {
       type: DataTypes.DATE,
-      allowNull: false,
-      validate: {
-        notNull: { msg: 'La fecha de nacimiento es requerida' },
-        isDate: { msg: 'La fecha de nacimiento debe ser una fecha válida' },
-      },
+      allowNull: true
     },
     player_number: {
       type: DataTypes.STRING,

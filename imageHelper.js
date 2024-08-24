@@ -19,4 +19,10 @@ function getRandomLogo() {
   return logos[randomIndex];
 }
 
-module.exports = { preloadImages, getRandomLogo };
+function getLogoBase64(filename) {
+  const filePath = path.join(__dirname, './images/teams', filename);
+  const fileContent = fs.readFileSync(filePath);
+  return `data:image/png;base64,${fileContent.toString('base64')}`;
+}
+
+module.exports = { preloadImages, getRandomLogo, getLogoBase64 };

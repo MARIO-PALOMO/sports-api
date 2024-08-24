@@ -1253,6 +1253,87 @@ router.post('/teams/addMultipleTeams', cteam.addMultipleTeams);
 
 /**
  * @swagger
+ * /teams/addMultipleTeamsLogo:
+ *   post:
+ *     tags:
+ *       - Equipos
+ *     summary: Crear múltiples equipos con logos en base64
+ *     description: Crea múltiples equipos a partir de una lista de objetos de equipo. Cada equipo debe incluir un logo en formato base64.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   description: Nombre del equipo
+ *                   example: "Equipo A"
+ *                 coach:
+ *                   type: string
+ *                   description: Nombre del entrenador
+ *                   example: "Juan Pérez"
+ *                 logo:
+ *                   type: string
+ *                   description: Logo del equipo en formato base64
+ *                   example: "iVBORw0KGgoAAAANSUhEUgAA..."
+ *     responses:
+ *       '201':
+ *         description: Equipos creados exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Equipos creados exitosamente"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         format: uuid
+ *                         example: "e1e0e9d3-657c-4a91-b5a2-f91c03e8b5b8"
+ *                       name:
+ *                         type: string
+ *                         example: "Equipo A"
+ *                       coach:
+ *                         type: string
+ *                         example: "Juan Pérez"
+ *                       logo:
+ *                         type: string
+ *                         example: "iVBORw0KGgoAAAANSUhEUgAA..."
+ *       '400':
+ *         description: Error en la solicitud, el campo "logo" es obligatorio
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "El campo 'logo' es obligatorio en cada equipo"
+ *       '500':
+ *         description: Error interno del servidor al crear los equipos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error al crear equipos: <error_message>"
+ */
+router.post('/teams/addMultipleTeamsLogo', cteam.addMultipleTeamsLogo);
+
+/**
+ * @swagger
  * /teams/{id}/updateTeamDetails:
  *   put:
  *     tags:
@@ -1376,49 +1457,79 @@ router.delete('/teams/:id/deleteTeam', cteam.deleteTeam);
  * @swagger
  * tags:
  *   name: Jugadores
- *   description: Operaciones relacionadas con jugadores
+ *   description: API para gestionar jugadores
  */
 
 /**
  * @swagger
  * /players/getAll:
  *   get:
+ *     summary: Obtener todos los jugadores
  *     tags: [Jugadores]
- *     summary: Obtiene la lista de todos los jugadores
  *     responses:
  *       200:
  *         description: Lista de jugadores encontrados
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Lista de jugadores encontrados
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
+ *             example:
+ *               message: Lista de jugadores encontrados
+ *               data:
+ *                 - id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                   name: "John Doe"
+ *                   document_number: "1234567890"
+ *                   birthdate: "1990-01-01"
+ *                   player_number: "10"
+ *                   team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                   photo: "base64string"
  *       500:
  *         description: Error al consultar jugadores
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al consultar jugadores
+ *             example:
+ *               data: null
+ *               error: "Error al consultar jugadores"
  */
 router.get('/players/getAll', cplayer.getAllPlayers);
 
 /**
  * @swagger
+ * /players/getAllPlayersWithTeams:
+ *   get:
+ *     summary: Obtener todos los jugadores con la información del equipo
+ *     tags: [Jugadores]
+ *     responses:
+ *       200:
+ *         description: Jugadores encontrados
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Jugadores encontrados
+ *               data:
+ *                 - id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                   name: "John Doe"
+ *                   document_number: "1234567890"
+ *                   birthdate: "1990-01-01"
+ *                   player_number: "10"
+ *                   team:
+ *                     id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                     name: "Team A"
+ *                     logo: "base64string"
+ *       500:
+ *         description: Error al consultar jugadores con equipos
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               error: "Error al consultar jugadores con equipos"
+ */
+router.get('/players/getAllPlayersWithTeams', cplayer.getAllPlayersWithTeams);
+
+/**
+ * @swagger
  * /players/{id}:
  *   get:
+ *     summary: Obtener un jugador por ID
  *     tags: [Jugadores]
- *     summary: Obtiene un jugador por ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -1431,179 +1542,78 @@ router.get('/players/getAll', cplayer.getAllPlayers);
  *         description: Jugador encontrado
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Jugador encontrado
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     document_number:
- *                       type: string
- *                     birthdate:
- *                       type: string
- *                       format: date
- *                     player_number:
- *                       type: integer
- *                     team_id:
- *                       type: string
- *                     photo:
- *                       type: string
- *                       format: byte
+ *             example:
+ *               message: Jugador encontrado
+ *               data:
+ *                 id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 name: "John Doe"
+ *                 document_number: "1234567890"
+ *                 birthdate: "1990-01-01"
+ *                 player_number: "10"
+ *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 photo: "base64string"
  *       404:
  *         description: Jugador no encontrado
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Jugador no encontrado
+ *             example:
+ *               data: null
+ *               message: "Jugador no encontrado"
  *       500:
  *         description: Error al consultar jugador
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al consultar jugador
+ *             example:
+ *               data: null
+ *               error: "Error al consultar jugador"
  */
 router.get('/players/:id', cplayer.getPlayerById);
 
 /**
  * @swagger
- * /players/getAllPlayersWithTeams:
- *   get:
- *     tags: [Jugadores]
- *     summary: Obtiene todos los jugadores con la información del equipo
- *     responses:
- *       200:
- *         description: Jugadores encontrados
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Jugadores encontrados
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       name:
- *                         type: string
- *                       document_number:
- *                         type: string
- *                       birthdate:
- *                         type: string
- *                         format: date
- *                       player_number:
- *                         type: integer
- *                       team_id:
- *                         type: string
- *                       photo:
- *                         type: string
- *                         format: byte
- *                       team:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                           name:
- *                             type: string
- *                           logo:
- *                             type: string
- *                             format: byte
- *       500:
- *         description: Error al consultar jugadores con equipos
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al consultar jugadores con equipos
- */
-router.get('/players/getAllPlayersWithTeams', cplayer.getAllPlayersWithTeams);
-
-/**
- * @swagger
  * /players/addPlayer:
  *   post:
+ *     summary: Crear un nuevo jugador
  *     tags: [Jugadores]
- *     summary: Crea un nuevo jugador con una foto predeterminada
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               document_number:
- *                 type: string
- *               birthdate:
- *                 type: string
- *                 format: date
- *               player_number:
- *                 type: integer
- *               team_id:
- *                 type: string
+ *           example:
+ *             name: "John Doe"
+ *             document_number: "1234567890"
+ *             birthdate: "1990-01-01"
+ *             player_number: "10"
+ *             team_name: "Team A"
  *     responses:
  *       200:
  *         description: Jugador creado exitosamente
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Jugador creado exitosamente
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     document_number:
- *                       type: string
- *                     birthdate:
- *                       type: string
- *                       format: date
- *                     player_number:
- *                       type: integer
- *                     team_id:
- *                       type: string
- *                     photo:
- *                       type: string
- *                       format: byte
+ *             example:
+ *               message: Jugador creado exitosamente
+ *               data:
+ *                 id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 name: "John Doe"
+ *                 document_number: "1234567890"
+ *                 birthdate: "1990-01-01"
+ *                 player_number: "10"
+ *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 photo: "base64string"
  *       400:
  *         description: Error al crear jugador
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al crear jugador
+ *             example:
+ *               data: null
+ *               error: "Error al crear jugador"
+ *       404:
+ *         description: Equipo no encontrado
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               error: "Equipo no encontrado."
  */
 router.post('/players/addPlayer', cplayer.addPlayer);
 
@@ -1611,70 +1621,59 @@ router.post('/players/addPlayer', cplayer.addPlayer);
  * @swagger
  * /players/addMultiplePlayers:
  *   post:
+ *     summary: Crear varios jugadores a la vez
  *     tags: [Jugadores]
- *     summary: Crea varios jugadores a la vez
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: array
- *             items:
- *               type: object
- *               properties:
- *                 name:
- *                   type: string
- *                 document_number:
- *                   type: string
- *                 birthdate:
- *                   type: string
- *                   format: date
- *                 player_number:
- *                   type: integer
- *                 team_id:
- *                   type: string
+ *           example:
+ *             - name: "John Doe"
+ *               document_number: "1234567890"
+ *               birthdate: "1990-01-01"
+ *               player_number: "10"
+ *               team_name: "Team A"
+ *             - name: "Jane Doe"
+ *               document_number: "0987654321"
+ *               birthdate: "1992-02-02"
+ *               player_number: "15"
+ *               team_name: "Team B"
  *     responses:
  *       200:
  *         description: Jugadores creados exitosamente
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Jugadores creados exitosamente
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       name:
- *                         type: string
- *                       document_number:
- *                         type: string
- *                       birthdate:
- *                         type: string
- *                         format: date
- *                       player_number:
- *                         type: integer
- *                       team_id:
- *                         type: string
- *                       photo:
- *                         type: string
- *                         format: byte
+ *             example:
+ *               message: Jugadores creados exitosamente
+ *               data:
+ *                 - id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                   name: "John Doe"
+ *                   document_number: "1234567890"
+ *                   birthdate: "1990-01-01"
+ *                   player_number: "10"
+ *                   team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                   photo: "base64string"
+ *                 - id: "c8c8d8c8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                   name: "Jane Doe"
+ *                   document_number: "0987654321"
+ *                   birthdate: "1992-02-02"
+ *                   player_number: "15"
+ *                   team_id: "d9d9d9d9-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                   photo: "base64string"
  *       400:
  *         description: Error al crear jugadores
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al crear jugadores
+ *             example:
+ *               data: null
+ *               error: "Error al crear jugadores"
+ *       500:
+ *         description: Error al cargar la foto predeterminada
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               error: "Error al cargar la foto predeterminada."
  */
 router.post('/players/addMultiplePlayers', cplayer.addMultiplePlayers);
 
@@ -1682,66 +1681,61 @@ router.post('/players/addMultiplePlayers', cplayer.addMultiplePlayers);
  * @swagger
  * /players/{id}/updatePlayer:
  *   put:
+ *     summary: Actualizar los datos de un jugador
  *     tags: [Jugadores]
- *     summary: Actualiza un jugador existente
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del jugador a actualizar
+ *         description: ID del jugador
  *         schema:
  *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               document_number:
- *                 type: string
- *               birthdate:
- *                 type: string
- *                 format: date
- *               player_number:
- *                 type: integer
- *               team_id:
- *                 type: string
+ *           example:
+ *             name: "John Doe"
+ *             document_number: "1234567890"
+ *             birthdate: "1990-01-01"
+ *             player_number: "10"
+ *             team_name: "Team A"
  *     responses:
  *       200:
  *         description: Jugador actualizado exitosamente
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Jugador actualizado exitosamente
- *                 data:
- *                   type: object
- *       404:
- *         description: Jugador no encontrado
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Jugador no encontrado
+ *             example:
+ *               message: Jugador actualizado exitosamente
+ *               data:
+ *                 id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 name: "John Doe"
+ *                 document_number: "1234567890"
+ *                 birthdate: "1990-01-01"
+ *                 player_number: "10"
+ *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 photo: "base64string"
  *       400:
  *         description: Error al actualizar jugador
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al actualizar jugador
+ *             example:
+ *               data: null
+ *               error: "Error al actualizar jugador"
+ *       404:
+ *         description: Jugador no encontrado
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               message: "Jugador no encontrado"
+ *       500:
+ *         description: Error al cargar la foto predeterminada
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               error: "Error al cargar la foto predeterminada."
  */
 router.put('/players/:id/updatePlayer', cplayer.updatePlayer);
 
@@ -1749,57 +1743,50 @@ router.put('/players/:id/updatePlayer', cplayer.updatePlayer);
  * @swagger
  * /players/{id}/updatePlayerPhoto:
  *   put:
+ *     summary: Actualizar la foto de un jugador
  *     tags: [Jugadores]
- *     summary: Actualiza la foto de un jugador
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del jugador cuya foto será actualizada
+ *         description: ID del jugador
  *         schema:
  *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               photo:
- *                 type: string
+ *           example:
+ *             photo: "base64string"
  *     responses:
  *       200:
- *         description: Foto actualizada exitosamente
+ *         description: Foto del jugador actualizada exitosamente
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Foto actualizada exitosamente
- *                 data:
- *                   type: object
- *       404:
- *         description: Jugador no encontrado
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Jugador no encontrado
+ *             example:
+ *               message: Foto del jugador actualizada exitosamente
+ *               data:
+ *                 id: "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 name: "John Doe"
+ *                 document_number: "1234567890"
+ *                 birthdate: "1990-01-01"
+ *                 player_number: "10"
+ *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *                 photo: "base64string"
  *       400:
  *         description: Error al actualizar la foto del jugador
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al actualizar foto del jugador
+ *             example:
+ *               data: null
+ *               error: "Error al actualizar la foto del jugador"
+ *       404:
+ *         description: Jugador no encontrado
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               message: "Jugador no encontrado"
  */
 router.put('/players/:id/updatePlayerPhoto', cplayer.updatePlayerPhoto);
 
@@ -1807,13 +1794,13 @@ router.put('/players/:id/updatePlayerPhoto', cplayer.updatePlayerPhoto);
  * @swagger
  * /players/{id}/deletePlayer:
  *   delete:
+ *     summary: Eliminar un jugador por ID
  *     tags: [Jugadores]
- *     summary: Elimina un jugador por ID
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del jugador a eliminar
+ *         description: ID del jugador
  *         schema:
  *           type: string
  *     responses:
@@ -1821,32 +1808,22 @@ router.put('/players/:id/updatePlayerPhoto', cplayer.updatePlayerPhoto);
  *         description: Jugador eliminado exitosamente
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Jugador eliminado exitosamente
+ *             example:
+ *               message: Jugador eliminado exitosamente
+ *       400:
+ *         description: Error al eliminar jugador
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               error: "Error al eliminar jugador"
  *       404:
  *         description: Jugador no encontrado
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Jugador no encontrado
- *       500:
- *         description: Error al eliminar jugador
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al eliminar jugador
+ *             example:
+ *               data: null
+ *               message: "Jugador no encontrado"
  */
 router.delete('/players/:id/deletePlayer', cplayer.deletePlayer);
 
@@ -1854,38 +1831,37 @@ router.delete('/players/:id/deletePlayer', cplayer.deletePlayer);
  * @swagger
  * /players/deleteMultiplePlayers:
  *   delete:
+ *     summary: Eliminar varios jugadores a la vez
  *     tags: [Jugadores]
- *     summary: Elimina varios jugadores a la vez
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           schema:
- *             type: array
- *             items:
- *               type: string
- *               description: Lista de IDs de jugadores a eliminar
+ *           example:
+ *             ids:
+ *               - "e7b8d7b7-9f71-4ad6-b5bc-4f7e1e2f1b1d"
+ *               - "c8c8d8c8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
  *     responses:
  *       200:
  *         description: Jugadores eliminados exitosamente
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Jugadores eliminados exitosamente
+ *             example:
+ *               message: Jugadores eliminados exitosamente
  *       400:
  *         description: Error al eliminar jugadores
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error al eliminar jugadores
+ *             example:
+ *               data: null
+ *               error: "Error al eliminar jugadores"
+ *       404:
+ *         description: Jugador(es) no encontrado(s)
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               message: "Jugador(es) no encontrado(s)"
  */
 router.delete('/players/deleteMultiplePlayers', cplayer.deleteMultiplePlayers);
 

@@ -64,8 +64,14 @@ module.exports = {
 
     // Creación de un jugador con una foto predeterminada
     async addPlayer(req, res) {
-        const { name, document_number, birthdate, player_number, team_id } = req.body;
+        const { name, document_number, birthdate, player_number, team_name } = req.body;
         try {
+            // Buscar el ID del equipo por el nombre
+            const team = await Team.findOne({ where: { name: team_name } });
+            if (!team) {
+                return res.status(404).json({ data: null, error: 'Equipo no encontrado.' });
+            }
+
             const defaultPhoto = loadDefaultPhoto();
             if (!defaultPhoto) {
                 return res.status(500).json({ data: null, error: 'Error al cargar la foto predeterminada.' });
@@ -76,7 +82,7 @@ module.exports = {
                 document_number,
                 birthdate,
                 player_number,
-                team_id,
+                team_id: team.id,  // Usar el ID del equipo encontrado
                 photo: defaultPhoto,
             });
 
@@ -105,8 +111,15 @@ module.exports = {
 
             const players = await Promise.all(playersData.map(async playerData => {
                 try {
+                    // Buscar el ID del equipo por el nombre
+                    const team = await Team.findOne({ where: { name: playerData.team_name } });
+                    if (!team) {
+                        throw new Error(`Equipo no encontrado: ${playerData.team_name}`);
+                    }
+
                     return await Player.create({
                         ...playerData,
+                        team_id: team.id,  // Usar el ID del equipo encontrado
                         photo: defaultPhoto,
                     });
                 } catch (playerError) {

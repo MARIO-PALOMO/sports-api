@@ -1,6 +1,7 @@
 const { Team } = require('../models');
 const clog = require('./log.controller');
 const { getRandomLogo } = require('../imageHelper.js');
+const { getLogoBase64 } = require('../imageHelper.js');
 
 module.exports = {
 
@@ -48,6 +49,29 @@ module.exports = {
     } catch (error) {
       clog.addLocal('team.controller', 'addMultipleTeams', 'Error al crear los equipos: ' + error, JSON.stringify(req));
       return res.status(500).json({ data: null, message: 'Error al crear equipos: ' + error });
+    }
+  },
+
+  // Crear múltiples equipos con logos en base64
+  async addMultipleTeamsLogo(req, res) {
+    try {
+      // Mapea los datos de equipos, generando el logo base64 a partir del nombre del archivo
+      const teamsData = req.body.map(team => {
+        if (!team.logo) {
+          throw new Error('El campo "logo" es obligatorio en cada equipo');
+        }
+        const logoBase64 = getLogoBase64(team.logo);
+        return { ...team, logo: logoBase64 };
+      });
+
+      // Crea los equipos en la base de datos
+      const newTeams = await Team.bulkCreate(teamsData);
+
+      return res.status(201).json({ message: 'Equipos creados exitosamente', data: newTeams });
+    } catch (error) {
+      // Manejo de errores y logging
+      clog.addLocal('team.controller', 'addMultipleTeamsLogo', `Error al crear los equipos: ${error.message}`, JSON.stringify(req.body));
+      return res.status(500).json({ data: null, message: `Error al crear equipos: ${error.message}` });
     }
   },
 

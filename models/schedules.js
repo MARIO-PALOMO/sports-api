@@ -3,9 +3,22 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Schedule extends Model {
     static associate(models) {
-      Schedule.belongsTo(models.State, {
+      // Relación muchos a uno: Un horario (schedule) pertenece a un campo (field)
+      this.belongsTo(models.Field, {
+        foreignKey: 'field_id',  // Clave foránea en Schedule que apunta a Field
+        as: 'field',             // Alias para la relación
+      });
+
+      // Relación muchos a uno: Un horario (schedule) pertenece a un estado (state)
+      this.belongsTo(models.State, {
         foreignKey: 'states_id',
-        as: 'states',
+        as: 'state',
+      });
+
+      // Otras asociaciones necesarias
+      this.belongsTo(models.Match, {
+        foreignKey: 'match_id',
+        as: 'match',
       });
     }
   }
@@ -15,6 +28,7 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      allowNull: false
     },
     match_id: {
       type: DataTypes.UUID,
@@ -53,10 +67,10 @@ module.exports = (sequelize) => {
       },
     },
     start_time: {
-      type: DataTypes.DATE,
+      type: DataTypes.TIME,
       allowNull: false,
       validate: {
-        isDate: { msg: 'La hora de inicio debe ser una fecha válida' },
+        isTime: { msg: 'La hora de inicio debe ser una hora válida' },
         notNull: { msg: 'La hora de inicio es requerida' },
       },
     }

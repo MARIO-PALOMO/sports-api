@@ -8,6 +8,18 @@ module.exports = (sequelize) => {
         foreignKey: 'team_id',  // La clave foránea en el modelo Player que apunta al equipo
         as: 'players',          // Alias para la relación
       });
+      
+      // Relación uno a muchos: Un equipo puede ser el equipo local en muchos partidos
+      this.hasMany(models.Match, {
+        foreignKey: 'home_team_id',
+        as: 'homeMatches',
+      });
+
+      // Relación uno a muchos: Un equipo puede ser el equipo visitante en muchos partidos
+      this.hasMany(models.Match, {
+        foreignKey: 'away_team_id',
+        as: 'awayMatches',
+      });
     }
   }
 
@@ -42,6 +54,11 @@ module.exports = (sequelize) => {
     logo: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     }
   }, {
     sequelize,

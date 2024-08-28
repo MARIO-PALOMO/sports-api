@@ -3,7 +3,7 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Competition extends Model {
     static associate(models) {
-      Competition.hasMany(models.Match, {
+      this.hasMany(models.Match, {
         foreignKey: 'competition_id',
         as: 'matches',
       });
@@ -75,6 +75,11 @@ module.exports = (sequelize) => {
     logo_2: {
       type: DataTypes.TEXT,
       allowNull: true,
+    }, 
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     }
   }, {
     sequelize,

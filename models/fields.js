@@ -3,6 +3,11 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Field extends Model {
     static associate(models) {
+      // Relación uno a muchos: Un campo tiene muchos horarios (schedules)
+      this.hasMany(models.Schedule, {
+        foreignKey: 'field_id',  // Clave foránea en Schedule que apunta a Field
+        as: 'schedules',         // Alias para la relación
+      });
     }
   }
 

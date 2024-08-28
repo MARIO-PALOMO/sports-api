@@ -5,10 +5,10 @@ const { getLogoBase64 } = require('../imageHelper.js');
 
 module.exports = {
 
-  // Consultar todos los equipos
+  // Consultar todos los equipos activos
   async getAll(req, res) {
     try {
-      const teams = await Team.findAll();
+      const teams = await Team.findAll({ where: { active: true } });
       return res.status(200).json({ message: 'Equipos encontrados', data: teams });
     } catch (error) {
       clog.addLocal('team.controller', 'getAll', 'Error al consultar los equipos: ' + error, JSON.stringify(req));
@@ -16,11 +16,12 @@ module.exports = {
     }
   },
 
-  // Leer un equipo por id
+  // Leer un equipo activo por id
   async getTeamById(req, res) {
     try {
       const team = await Team.findByPk(req.params.id);
       if (!team) return res.status(404).json({ message: 'Equipo no encontrado', data: null });
+      if (!team.active) return res.status(404).json({ message: 'Equipo no activo', data: null });
       return res.status(200).json({ message: 'Equipo encontrado', data: team });
     } catch (error) {
       clog.addLocal('team.controller', 'getTeamById', 'Error al consultar el equipo: ' + error, JSON.stringify(req));

@@ -20,7 +20,9 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: { msg: 'El nombre no puede estar vacío' },
+        notEmpty: {
+          msg: 'El nombre no puede estar vacío',
+        },
         len: {
           args: [1, 255],
           msg: 'El nombre debe tener entre 1 y 255 caracteres',
@@ -41,16 +43,6 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
     },
   }, {
     sequelize,

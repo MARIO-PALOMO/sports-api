@@ -93,18 +93,19 @@ router.get('/getAll', matchController.getAllMatches);
  * @swagger
  * /matches/getMatchesByRound/{code}:
  *   get:
- *     summary: Obtener el listado de todos los partidos por código de ronda.
+ *     summary: Obtiene el listado de partidos de una ronda específica.
+ *     description: Recupera todos los partidos que pertenecen a la ronda identificada por el código proporcionado.
  *     tags: [Partidos]
  *     parameters:
- *       - in: path
- *         name: code
+ *       - name: code
+ *         in: path
+ *         description: Código de la ronda para filtrar los partidos.
  *         required: true
  *         schema:
  *           type: string
- *         description: Código de la ronda.
  *     responses:
- *       200:
- *         description: Listado de todos los partidos para la ronda con el código dado.
+ *       '200':
+ *         description: Listado de partidos de la ronda.
  *         content:
  *           application/json:
  *             schema:
@@ -112,7 +113,7 @@ router.get('/getAll', matchController.getAllMatches);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Listado de todos los partidos para la ronda con código ED64
+ *                   example: Listado de partidos de la ronda
  *                 data:
  *                   type: array
  *                   items:
@@ -120,25 +121,49 @@ router.get('/getAll', matchController.getAllMatches);
  *                     properties:
  *                       id:
  *                         type: string
- *                         example: f9cdb2b1-d5e1-4e78-a07a-68234805c5f7
+ *                         format: uuid
  *                       home_team_id:
  *                         type: string
- *                         example: 9b8cb2b3-9b8c-4b9b-a9c3-b8c3b8c3b8c3
+ *                         format: uuid
  *                       away_team_id:
  *                         type: string
- *                         example: 4e8cd5a1-6d8f-4f9c-b1b2-c8d7e1c2d3e4
+ *                         format: uuid
  *                       competition_id:
  *                         type: string
- *                         example: 9b8cb2b3-9b8c-4b9b-a9c3-b8c3b8c3b8c3
+ *                         format: uuid
  *                       round_id:
  *                         type: string
- *                         example: 6d8f4e8c-5a6b-4c7d-9e8b-1f2a3c4d5e6f
+ *                         format: uuid
  *                       match_date:
  *                         type: string
  *                         format: date-time
- *                         example: 2024-08-27T14:30:00Z
- *       404:
- *         description: No se encontró la ronda con el código dado.
+ *                       competition:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                       round:
+ *                         type: object
+ *                       homeTeam:
+ *                         type: object
+ *                       awayTeam:
+ *                         type: object
+ *                       schedules:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               format: uuid
+ *                             field:
+ *                               type: object
+ *                             state:
+ *                               type: object
+ *                       result:
+ *                         type: object
+ *       '404':
+ *         description: Ronda no encontrada.
  *         content:
  *           application/json:
  *             schema:
@@ -146,11 +171,11 @@ router.get('/getAll', matchController.getAllMatches);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: No se encontró la ronda con el código ED64
+ *                   example: Ronda no encontrada
  *                 data:
  *                   type: null
- *       500:
- *         description: Error al consultar partidos por código de ronda.
+ *       '500':
+ *         description: Error interno del servidor.
  *         content:
  *           application/json:
  *             schema:
@@ -158,10 +183,9 @@ router.get('/getAll', matchController.getAllMatches);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Error al consultar partidos por código de ronda
+ *                   example: Error al consultar los partidos de la ronda
  *                 data:
  *                   type: string
- *                   example: Error message
  */
 router.get('/getMatchesByRound/:code', matchController.getMatchesByRound);
 
@@ -169,18 +193,20 @@ router.get('/getMatchesByRound/:code', matchController.getMatchesByRound);
  * @swagger
  * /matches/{id}:
  *   get:
- *     summary: Obtener la información de un partido por su ID.
+ *     summary: Obtener un partido por ID
+ *     description: Obtiene los detalles de un partido específico basado en el ID proporcionado.
  *     tags: [Partidos]
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
+ *         description: ID del partido que se desea obtener.
  *         required: true
  *         schema:
  *           type: string
- *         description: ID del partido.
+ *           example: 123e4567-e89b-12d3-a456-426614174000
  *     responses:
- *       200:
- *         description: Información del partido con el ID dado.
+ *       '200':
+ *         description: Partido encontrado exitosamente.
  *         content:
  *           application/json:
  *             schema:
@@ -188,31 +214,90 @@ router.get('/getMatchesByRound/:code', matchController.getMatchesByRound);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Información del partido con ID f9cdb2b1-d5e1-4e78-a07a-68234805c5f7
+ *                   example: Partido encontrado
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
  *                       type: string
- *                       example: f9cdb2b1-d5e1-4e78-a07a-68234805c5f7
- *                     home_team_id:
- *                       type: string
- *                       example: 9b8cb2b3-9b8c-4b9b-a9c3-b8c3b8c3b8c3
- *                     away_team_id:
- *                       type: string
- *                       example: 4e8cd5a1-6d8f-4f9c-b1b2-c8d7e1c2d3e4
- *                     competition_id:
- *                       type: string
- *                       example: 9b8cb2b3-9b8c-4b9b-a9c3-b8c3b8c3b8c3
- *                     round_id:
- *                       type: string
- *                       example: 6d8f4e8c-5a6b-4c7d-9e8b-1f2a3c4d5e6f
+ *                       example: 123e4567-e89b-12d3-a456-426614174000
  *                     match_date:
  *                       type: string
  *                       format: date-time
- *                       example: 2024-08-27T14:30:00Z
- *       404:
- *         description: Partido con el ID dado no encontrado.
+ *                       example: '2024-08-24T15:00:00Z'
+ *                     round_id:
+ *                       type: string
+ *                       example: 123e4567-e89b-12d3-a456-426614174001
+ *                     homeTeam:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: 123e4567-e89b-12d3-a456-426614174002
+ *                         name:
+ *                           type: string
+ *                           example: Equipo Local
+ *                     awayTeam:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: 123e4567-e89b-12d3-a456-426614174003
+ *                         name:
+ *                           type: string
+ *                           example: Equipo Visitante
+ *                     competition:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                           example: Campeonato Nacional
+ *                     round:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: 123e4567-e89b-12d3-a456-426614174004
+ *                         code:
+ *                           type: string
+ *                           example: RND001
+ *                     schedules:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: 123e4567-e89b-12d3-a456-426614174005
+ *                           field:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: string
+ *                                 example: 123e4567-e89b-12d3-a456-426614174006
+ *                               name:
+ *                                 type: string
+ *                                 example: Estadio Principal
+ *                           state:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: string
+ *                                 example: 123e4567-e89b-12d3-a456-426614174007
+ *                               name:
+ *                                 type: string
+ *                                 example: Programado
+ *                     result:
+ *                       type: object
+ *                       properties:
+ *                         home_score:
+ *                           type: integer
+ *                           example: 2
+ *                         away_score:
+ *                           type: integer
+ *                           example: 1
+ *       '404':
+ *         description: Partido no encontrado.
  *         content:
  *           application/json:
  *             schema:
@@ -220,11 +305,11 @@ router.get('/getMatchesByRound/:code', matchController.getMatchesByRound);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Partido con ID f9cdb2b1-d5e1-4e78-a07a-68234805c5f7 no encontrado
+ *                   example: Partido no encontrado
  *                 data:
  *                   type: null
- *       500:
- *         description: Error al consultar partido por ID.
+ *       '500':
+ *         description: Error interno del servidor.
  *         content:
  *           application/json:
  *             schema:
@@ -232,10 +317,10 @@ router.get('/getMatchesByRound/:code', matchController.getMatchesByRound);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Error al consultar partido por ID
+ *                   example: Error al consultar el partido por ID
  *                 data:
  *                   type: string
- *                   example: Error message
+ *                   example: Detalle del error
  */
 router.get('/:id', matchController.getMatchById);
 

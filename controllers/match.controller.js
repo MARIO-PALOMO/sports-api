@@ -67,65 +67,150 @@ module.exports = {
     },
 
     // Obtener el listado de todos los partidos por round_id
+    // Obtener el listado de partidos por código de ronda
     async getMatchesByRound(req, res) {
         try {
-            const { code } = req.params;
+            const { code } = req.params; // Obtener el código de la ronda del parámetro de la solicitud
 
-            // Obtener el round_id a partir del código
-            const round = await Round.findOne({ where: { code } });
+            // Encontrar la ronda por su código
+            const round = await Round.findOne({ where: { code }, attributes: ['id'] });
 
             if (!round) {
-                return res.status(404).json({ message: `No se encontró la ronda con el código ${code}`, data: null });
+                return res.status(404).json({ message: 'Ronda no encontrada', data: null });
             }
 
+            // Obtener el listado de partidos para la ronda encontrada
             const matches = await Match.findAll({
-                where: { round_id: round.id },
+                where: { round_id: round.id }, // Filtrar partidos por el ID de la ronda
                 include: [
-                    { model: Competition, as: 'competition' },
-                    { model: Round, as: 'round' },
-                    { model: Team, as: 'homeTeam' },
-                    { model: Team, as: 'awayTeam' },
+                    {
+                        model: Competition,
+                        as: 'competition',
+                        attributes: ['name'], // Solo traer el campo 'name'
+                    },
+                    {
+                        model: Round,
+                        as: 'round',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
+                    {
+                        model: Team,
+                        as: 'homeTeam',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
+                    {
+                        model: Team,
+                        as: 'awayTeam',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
+                    {
+                        model: Schedule,
+                        as: 'schedules',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                        include: [
+                            {
+                                model: Field,
+                                as: 'field',
+                                attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                            },
+                            {
+                                model: State,
+                                as: 'state',
+                                attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                            },
+                        ],
+                    },
+                    {
+                        model: Result,
+                        as: 'result',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
                 ],
+                attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt de Match
+                order: [['match_date', 'ASC']], // Ordenar por match_date en forma ascendente
             });
 
-            res.json({ message: `Listado de todos los partidos para la ronda con código ${code}`, data: matches });
+            res.json({ message: 'Listado de partidos de la ronda', data: matches });
         } catch (error) {
             clog.addLocal(
                 'match.controller',
                 'getMatchesByRound',
-                'Error al consultar partidos por código de ronda: ' + error,
-                'Error al consultar partidos por código de ronda'
+                'Error al consultar los partidos de la ronda: ' + error,
+                'Error al consultar los partidos de la ronda'
             );
-            res.status(500).json({ message: 'Error al consultar partidos por código de ronda', data: error.message });
+            res.status(500).json({ message: 'Error al consultar los partidos de la ronda', data: error.message });
         }
     },
 
-    // Obtener la información de 1 partido por su id y con todas sus relaciones
+    // Obtener un partido por su ID
     async getMatchById(req, res) {
         try {
-            const { id } = req.params;
-            const match = await Match.findByPk(id, {
+            const { id } = req.params; // Obtener el ID del partido del parámetro de la solicitud
+
+            // Buscar el partido por su ID
+            const match = await Match.findOne({
+                where: { id },
                 include: [
-                    { model: Competition, as: 'competition' },
-                    { model: Round, as: 'round' },
-                    { model: Team, as: 'homeTeam' },
-                    { model: Team, as: 'awayTeam' },
+                    {
+                        model: Competition,
+                        as: 'competition',
+                        attributes: ['name'], // Solo traer el campo 'name'
+                    },
+                    {
+                        model: Round,
+                        as: 'round',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
+                    {
+                        model: Team,
+                        as: 'homeTeam',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
+                    {
+                        model: Team,
+                        as: 'awayTeam',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
+                    {
+                        model: Schedule,
+                        as: 'schedules',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                        include: [
+                            {
+                                model: Field,
+                                as: 'field',
+                                attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                            },
+                            {
+                                model: State,
+                                as: 'state',
+                                attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                            },
+                        ],
+                    },
+                    {
+                        model: Result,
+                        as: 'result',
+                        attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt
+                    },
                 ],
+                attributes: { exclude: ['createdAt', 'updatedAt'] }, // Excluir createdAt y updatedAt de Match
             });
 
-            if (match) {
-                res.json({ message: `Información del partido con ID ${id}`, data: match });
-            } else {
-                res.status(404).json({ message: `Partido con ID ${id} no encontrado`, data: null });
+            // Verificar si el partido fue encontrado
+            if (!match) {
+                return res.status(404).json({ message: 'Partido no encontrado', data: null });
             }
+
+            res.json({ message: 'Partido encontrado', data: match });
         } catch (error) {
             clog.addLocal(
                 'match.controller',
                 'getMatchById',
-                'Error al consultar partido por id: ' + error,
-                'Error al consultar partido por id'
+                'Error al consultar el partido por ID: ' + error,
+                'Error al consultar el partido por ID'
             );
-            res.status(500).json({ message: 'Error al consultar partido por id', data: error.message });
+            res.status(500).json({ message: 'Error al consultar el partido por ID', data: error.message });
         }
     },
 

@@ -57,7 +57,7 @@ module.exports = {
                     model: Team,
                     as: 'team',
                 },
-                order: [['player_number', 'ASC']], // Ordenar por player_number de forma ascendente
+                order: [[Sequelize.literal('CAST(player_number AS INTEGER)'), 'ASC']], // Ordenar por player_number numéricamente
             });
 
             if (!players.length) {
@@ -110,50 +110,65 @@ module.exports = {
 
     // Creación de varios jugadores a la vez
     async addMultiplePlayers(req, res) {
-        const playersData = req.body;
+        const { body: playersData } = req;
+
         try {
             // Cargar la foto predeterminada una sola vez
             const defaultPhoto = loadDefaultPhoto();
             if (!defaultPhoto) {
-                return res.status(500).json({ data: null, error: 'Error al cargar la foto predeterminada.' });
+                const errorMsg = 'Error al cargar la foto predeterminada.';
+                clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg);
+                return res.status(500).json({ data: null, error: errorMsg });
             }
 
-            const players = await Promise.all(playersData.map(async playerData => {
-                try {
-                    // Buscar el ID del equipo por el nombre
-                    const team = await Team.findOne({ where: { name: playerData.team_name } });
-                    if (!team) {
-                        throw new Error(`Equipo no encontrado: ${playerData.team_name}`);
-                    }
+            // Obtener los IDs de los equipos en una sola consulta
+            const teamNames = playersData.map(player => player.team_name);
+            const teams = await Team.findAll({ where: { name: teamNames } });
+            const teamsMap = teams.reduce((acc, team) => {
+                acc[team.name] = team.id;
+                return acc;
+            }, {});
 
-                    return await Player.create({
+            const players = [];
+
+            for (const playerData of playersData) {
+                const teamId = teamsMap[playerData.team_name];
+                if (!teamId) {
+                    const errorMsg = `Equipo no encontrado: ${playerData.team_name}`;
+                    clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg, JSON.stringify(playerData));
+                    return res.status(400).json({ data: null, error: errorMsg });
+                }
+
+                try {
+                    const player = await Player.create({
                         ...playerData,
-                        team_id: team.id,  // Usar el ID del equipo encontrado
+                        team_id: teamId,
                         photo: defaultPhoto,
                     });
+
+                    players.push(player);
                 } catch (playerError) {
-                    // Manejar error individualmente
-                    clog.addLocal('player.controller', 'addMultiplePlayers', `Error al crear jugador: ${playerError}`, JSON.stringify(playerData));
-                    return null; // O manejar de otra manera según tus necesidades
+                    const errorMsg = `Error al crear jugador: ${playerError.message}`;
+                    clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg, JSON.stringify(playerData));
+                    return res.status(500).json({ data: null, error: errorMsg });
                 }
-            }));
-
-            // Filtrar los jugadores que se crearon exitosamente
-            const successfulPlayers = players.filter(player => player !== null);
-
-            if (successfulPlayers.length === 0) {
-                return res.status(400).json({ data: null, error: 'No se pudo crear ningún jugador.' });
             }
 
-            return res.status(200).json({ message: 'Jugadores creados exitosamente', data: successfulPlayers });
+            if (!players.length) {
+                const errorMsg = 'No se pudo crear ningún jugador.';
+                clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg);
+                return res.status(400).json({ data: null, error: errorMsg });
+            }
+
+            return res.status(200).json({ message: 'Jugadores creados exitosamente', data: players });
         } catch (error) {
             const logData = {
                 method: req.method,
-                body: req.body,
+                body: playersData,
                 url: req.originalUrl,
             };
-            clog.addLocal('player.controller', 'addMultiplePlayers', `Error al consumir addMultiplePlayers: ${error}`, JSON.stringify(logData));
-            return res.status(400).json({ data: null, error: `Error al crear jugadores: ${error}` });
+            clog.addLocal('player.controller', 'addMultiplePlayers', `Error al consumir addMultiplePlayers: ${error.message}`, JSON.stringify(logData));
+            return res.status(500).json({ data: null, error: `Error al crear jugadores: ${error.message}` });
         }
     },
 

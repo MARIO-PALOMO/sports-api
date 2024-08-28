@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 /** @type {import('sequelize-cli').Migration} */
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     const date = new Date();
     const statesData = [
       { id: uuidv4(), name: 'Pendiente', createdAt: date, updatedAt: date },

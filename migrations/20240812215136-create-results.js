@@ -32,6 +32,14 @@ module.exports = {
         type: DataTypes.INTEGER,
         allowNull: false
       },
+      home_global_score: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      away_global_score: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

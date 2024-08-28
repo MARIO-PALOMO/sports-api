@@ -20,9 +20,7 @@ module.exports = {
         references: {
           model: 'matches',
           key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        }
       },
       field_id: {
         type: DataTypes.UUID,
@@ -30,9 +28,7 @@ module.exports = {
         references: {
           model: 'fields',
           key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        }
       },
       states_id: {
         type: DataTypes.UUID,
@@ -40,12 +36,10 @@ module.exports = {
         references: {
           model: 'states',
           key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        }
       },
       start_time: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         allowNull: false
       },
       createdAt: {

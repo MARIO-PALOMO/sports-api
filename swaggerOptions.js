@@ -22,8 +22,17 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./router.js'],
+  apis: ['./router.js', './routes/**/*.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
+
+function sortTags(spec) {
+  if (spec && spec.tags) {
+    spec.tags.sort((a, b) => a.name.localeCompare(b.name));
+  }
+}
+
+sortTags(swaggerSpec);
+
 module.exports = swaggerSpec;

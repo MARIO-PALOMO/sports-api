@@ -42,6 +42,11 @@ module.exports = {
         type: DataTypes.TEXT,
         allowNull: true // Permite nulos si el logo no siempre está disponible
       },
+      active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

@@ -27,7 +27,14 @@ module.exports = (sequelize) => {
           args: [1, 255],
           msg: 'El nombre debe tener entre 1 y 255 caracteres',
         },
-      },
+      }
+    },
+    color: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: 'El color no puede estar vacío' }
+      }
     }
   }, {
     sequelize,

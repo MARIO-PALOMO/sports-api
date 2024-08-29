@@ -22,6 +22,14 @@ module.exports = {
           len: [1, 255]
         }
       },
+      color: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+          len: [1, 50]
+        }
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

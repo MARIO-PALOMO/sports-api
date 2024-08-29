@@ -8,6 +8,11 @@ module.exports = (sequelize) => {
         foreignKey: 'team_id',  // Clave foránea que conecta al equipo
         as: 'team',             // Alias para la relación
       });
+
+      this.hasMany(models.Goal, {
+        foreignKey: 'player_id',
+        as: 'goals',
+      });
     }
   }
 

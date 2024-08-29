@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
       });
       
       // Asociación con Schedule (Un partido puede tener varios horarios)
-      this.hasMany(models.Schedule, {
+      this.hasOne(models.Schedule, {
         foreignKey: 'match_id', // Clave foránea en la tabla Schedule
         as: 'schedules', // Alias para la relación
       });
@@ -38,6 +38,12 @@ module.exports = (sequelize) => {
         foreignKey: 'match_id', // Clave foránea en la tabla Result
         as: 'result', // Alias para la relación
       });
+
+      this.hasMany(models.Goal, {
+        foreignKey: 'match_id',
+        as: 'goals',
+      });
+
     }
   }
 

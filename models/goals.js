@@ -3,6 +3,17 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Goal extends Model {
     static associate(models) {
+      // Relación con el modelo Match
+      this.belongsTo(models.Match, {
+        foreignKey: 'match_id',
+        as: 'match',
+      });
+
+      // Relación con el modelo Player
+      this.belongsTo(models.Player, {
+        foreignKey: 'player_id',
+        as: 'player',
+      });
     }
   }
 

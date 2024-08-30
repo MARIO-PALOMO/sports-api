@@ -13,6 +13,11 @@ module.exports = (sequelize) => {
         foreignKey: 'player_id',
         as: 'goals',
       });
+      
+      this.hasMany(models.Sanction, {
+        foreignKey: 'player_id',
+        as: 'sanctions',
+      });
     }
   }
 

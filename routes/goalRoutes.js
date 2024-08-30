@@ -11,6 +11,63 @@ const goalController = require('../controllers/goal.controller');
 
 /**
  * @swagger
+ * /goals/getGoalsByMatch/{match_id}:
+ *   get:
+ *     summary: Obtiene todos los goles de un partido específico
+ *     description: Devuelve todos los registros de goles de un partido en particular, incluyendo la información del partido y del jugador asociado a cada gol.
+ *     tags: [Gestión de Goles]
+ *     parameters:
+ *       - in: path
+ *         name: match_id
+ *         required: true
+ *         description: El ID del partido del cual se quieren obtener los goles.
+ *         schema:
+ *           type: string
+ *           example: "cb0f4877-d7d7-4a72-a4d4-a99fd5d8eac8"
+ *     responses:
+ *       200:
+ *         description: Lista de goles encontrados para el partido.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Goles encontrados"
+ *               data:
+ *                 - id: "1c920b6b-e8f8-4e25-b92e-bc2d8b74f539"
+ *                   match_id: "cb0f4877-d7d7-4a72-a4d4-a99fd5d8eac8"
+ *                   player_id: "60e314d4-c247-4318-b65d-8a185342c838"
+ *                   match:
+ *                     id: "cb0f4877-d7d7-4a72-a4d4-a99fd5d8eac8"
+ *                     name: "Final Match"
+ *                   player:
+ *                     id: "60e314d4-c247-4318-b65d-8a185342c838"
+ *                     name: "Player One"
+ *       400:
+ *         description: Error de validación, el `match_id` no está presente en la solicitud.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "El match_id es requerido"
+ *               data: null
+ *       404:
+ *         description: No se encontraron goles para el partido especificado.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "No se encontraron goles para este partido"
+ *               data: null
+ *       500:
+ *         description: Error al consultar los goles del partido.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Error al consultar los goles del partido"
+ *               data: "Error message here"
+ */
+router.get('/getGoalsByMatch/:match_id', goalController.getGoalsByMatch);
+
+
+/**
+ * @swagger
  * /goals/addGoals:
  *   post:
  *     tags: [Gestión de Goles]
@@ -62,6 +119,6 @@ const goalController = require('../controllers/goal.controller');
  *               message: Error al agregar los goles
  *               data: "Mensaje de error detallado"
  */
-router.post('/goals/addGoals', goalController.addGoals);
+router.post('/addGoals', goalController.addGoals);
 
 module.exports = router;

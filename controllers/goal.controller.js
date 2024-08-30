@@ -3,6 +3,53 @@ const clog = require("./log.controller");
 
 module.exports = {
 
+  async getGoalsByMatch(req, res) {
+    try {
+      const { match_id } = req.params; // Obtener el ID del partido desde los parámetros de la solicitud
+
+      // Validar que el match_id no esté vacío
+      if (!match_id) {
+        return res.status(400).json({ message: 'El match_id es requerido', data: null });
+      }
+
+      // Buscar todos los goles relacionados con el partido
+      const goals = await Goal.findAll({
+        where: { match_id },
+        include: [
+          {
+            model: Match,
+            as: 'match',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: Player,
+            as: 'player',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+        ],
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        order: [['createdAt', 'ASC']],
+      });
+
+      // Verificar si se encontraron goles
+      if (goals.length === 0) {
+        return res.status(404).json({ message: 'No se encontraron goles para este partido', data: null });
+      }
+
+      // Respuesta con los goles encontrados
+      res.status(200).json({ message: 'Goles encontrados', data: goals });
+    } catch (error) {
+      // Manejo de errores y logging
+      clog.addLocal(
+        'goal.controller',
+        'getGoalsByMatch',
+        'Error al consultar los goles del partido: ' + error.message,
+        'Error al consultar los goles del partido'
+      );
+      res.status(500).json({ message: 'Error al consultar los goles del partido', data: error.message });
+    }
+  },
+
   async addGoals(req, res) {
     try {
       const { match_id, player_ids } = req.body;

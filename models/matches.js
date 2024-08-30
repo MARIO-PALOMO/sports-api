@@ -44,6 +44,11 @@ module.exports = (sequelize) => {
         as: 'goals',
       });
 
+      this.hasMany(models.Sanction, {
+        foreignKey: 'match_id',
+        as: 'sanctions',
+      });
+
     }
   }
 

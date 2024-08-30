@@ -4,8 +4,11 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class SanctionType extends Model {
     static associate(models) {
-      // Definir asociaciones aquí si es necesario
-      // Ejemplo: SanctionType.hasMany(models.Sanction, { foreignKey: 'sanction_type_id' });
+      // Relación de uno a muchos con el modelo Sanction
+      this.hasMany(models.Sanction, {
+        foreignKey: 'sanction_type_id',
+        as: 'sanctions',
+      });
     }
   }
 

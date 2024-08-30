@@ -4,10 +4,23 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Sanction extends Model {
     static associate(models) {
-      // Definir asociaciones aquí
-      // Sanction.belongsTo(models.Player, { foreignKey: 'player_id' });
-      // Sanction.belongsTo(models.Match, { foreignKey: 'match_id' });
-      // Sanction.belongsTo(models.SanctionType, { foreignKey: 'sanction_type_id' });
+      // Relación con el modelo Player
+      this.belongsTo(models.Player, {
+        foreignKey: 'player_id',
+        as: 'player',
+      });
+
+      // Relación con el modelo Match
+      this.belongsTo(models.Match, {
+        foreignKey: 'match_id',
+        as: 'match',
+      });
+
+      // Relación con el modelo SanctionType
+      this.belongsTo(models.SanctionType, {
+        foreignKey: 'sanction_type_id',
+        as: 'sanctionType',
+      });
     }
   }
 

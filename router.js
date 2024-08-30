@@ -13,6 +13,7 @@ const playerRoutes = require("./routes/playerRoutes");
 const sanctionTypesRoutes = require("./routes/sanctionTypesRoutes");
 const matchRoutes = require("./routes/matchRoutes");
 const goalRoutes = require("./routes/goalRoutes");
+const sanctionRoutes = require("./routes/sanctionRoutes");
 
 // Usar las rutas
 router.use('/log', logRoutes);
@@ -26,5 +27,6 @@ router.use('/players', playerRoutes);
 router.use('/sanctiontypes', sanctionTypesRoutes);
 router.use('/matches', matchRoutes);
 router.use('/goals', goalRoutes);
+router.use('/sanctions', sanctionRoutes);
 
 module.exports = router;

@@ -299,7 +299,7 @@ module.exports = {
             // Confirmar la transacción si todo ha ido bien
             await transaction.commit();
 
-            res.status(201).json({ message: 'Partido agregado exitosamente', data: match });
+            res.status(200).json({ message: 'Partido agregado exitosamente', data: match });
         } catch (error) {
             // Revertir todas las operaciones realizadas dentro de la transacción en caso de error
             await transaction.rollback();
@@ -425,7 +425,7 @@ module.exports = {
             // Confirmar la transacción si todo ha ido bien
             await transaction.commit();
 
-            res.status(201).json({ message: 'Partidos agregados exitosamente', data: createdMatches });
+            res.status(200).json({ message: 'Partidos agregados exitosamente', data: createdMatches });
         } catch (error) {
             // Revertir todas las operaciones realizadas dentro de la transacción en caso de error
             await transaction.rollback();

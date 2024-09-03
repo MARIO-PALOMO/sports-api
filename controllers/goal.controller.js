@@ -1,4 +1,4 @@
-const { Goal, Match, Player, Team } = require('../models'); // Asegúrate de que la ruta es correcta
+const { Goal, Match, Player, Team, sequelize } = require('../models'); // Asegúrate de que la ruta es correcta
 const clog = require("./log.controller");
 
 module.exports = {
@@ -49,6 +49,119 @@ module.exports = {
       res.status(500).json({ message: 'Error al consultar los goles del partido', data: error.message });
     }
   },
+  
+  async getTopScorers(req, res) {
+    try {
+      // Obtener todos los goles agrupados por jugador y contar la cantidad de goles
+      const topScorers = await Goal.findAll({
+        attributes: [
+          'player_id',
+          [sequelize.fn('COUNT', sequelize.col('player_id')), 'goalCount'], // Contar la cantidad de goles por jugador
+        ],
+        include: [
+          {
+            model: Player,
+            as: 'player',
+            attributes: ['id', 'name', 'player_number', 'team_id'], // Incluir id, nombre, número del jugador y team_id
+            include: [
+              {
+                model: Team,
+                as: 'team',
+                attributes: ['id', 'name'], // Incluir id y nombre del equipo
+              },
+            ],
+          },
+        ],
+        group: ['player_id', 'player.id', 'player.team_id', 'player.team.id'], // Agrupar por jugador y equipo
+        order: [[sequelize.literal('"goalCount"'), 'DESC']], // Ordenar por cantidad de goles usando comillas dobles para el alias
+      });
+
+      // Verificar si se encontraron goleadores
+      if (topScorers.length === 0) {
+        return res.status(404).json({ message: 'No se encontraron goleadores', data: null });
+      }
+
+      // Formatear la respuesta para incluir solo la información solicitada
+      const response = topScorers.map((scorer) => ({
+        team_id: scorer.player.team.id,
+        team_name: scorer.player.team.name,
+        player_id: scorer.player.id,
+        player_name: scorer.player.name,
+        player_number: scorer.player.player_number,
+        goal_count: scorer.getDataValue('goalCount'), // Obtener la cantidad de goles calculada
+      }));
+
+      // Respuesta con los goleadores encontrados
+      res.status(200).json({ message: 'Goleadores encontrados', data: response });
+    } catch (error) {
+      console.log(error);
+      clog.addLocal(
+        'goal.controller',
+        'getTopScorers',
+        'Error al consultar los goleadores: ' + error.message,
+        'Error al consultar los goleadores'
+      );
+      res.status(500).json({ message: 'Error al consultar los goleadores', data: error.message });
+    }
+  },
+
+  async getTopScorersByTeam(req, res) {
+    try {
+      const { team_id } = req.params; // Obtener el team_id desde los parámetros de la solicitud
+
+      // Obtener todos los goles agrupados por jugador y contar la cantidad de goles para el equipo específico
+      const topScorers = await Goal.findAll({
+        attributes: [
+          'player_id',
+          [sequelize.fn('COUNT', sequelize.col('player_id')), 'goalCount'], // Contar la cantidad de goles por jugador
+        ],
+        include: [
+          {
+            model: Player,
+            as: 'player',
+            attributes: ['id', 'name', 'player_number', 'team_id'], // Incluir id, nombre, número del jugador y team_id
+            where: { team_id }, // Filtrar por el equipo específico
+            include: [
+              {
+                model: Team,
+                as: 'team',
+                attributes: ['id', 'name'], // Incluir id y nombre del equipo
+              },
+            ],
+          },
+        ],
+        group: ['player_id', 'player.id', 'player.team_id', 'player.team.id'], // Agrupar por jugador y equipo
+        order: [[sequelize.literal('"goalCount"'), 'DESC']], // Ordenar por cantidad de goles usando comillas dobles para el alias
+      });
+
+      // Verificar si se encontraron goleadores
+      if (topScorers.length === 0) {
+        return res.status(404).json({ message: 'No se encontraron goleadores para este equipo', data: null });
+      }
+
+      // Formatear la respuesta para incluir solo la información solicitada
+      const response = topScorers.map((scorer) => ({
+        team_id: scorer.player.team.id,
+        team_name: scorer.player.team.name,
+        player_id: scorer.player.id,
+        player_name: scorer.player.name,
+        player_number: scorer.player.player_number,
+        goal_count: scorer.getDataValue('goalCount'), // Obtener la cantidad de goles calculada
+      }));
+
+      // Respuesta con los goleadores encontrados
+      res.status(200).json({ message: 'Goleadores encontrados para el equipo', data: response });
+    } catch (error) {
+      console.log(error);
+      clog.addLocal(
+        'goal.controller',
+        'getTopScorersByTeam',
+        'Error al consultar los goleadores por equipo: ' + error.message,
+        'Error al consultar los goleadores por equipo'
+      );
+      res.status(500).json({ message: 'Error al consultar los goleadores por equipo', data: error.message });
+    }
+  },
 
   async addGoals(req, res) {
     try {
@@ -94,7 +207,7 @@ module.exports = {
       // Guardar los goles en la base de datos
       const createdGoals = await Goal.bulkCreate(goals, { returning: true });
 
-      res.status(201).json({ message: 'Goles agregados exitosamente', data: createdGoals });
+      res.status(200).json({ message: 'Goles agregados exitosamente', data: createdGoals });
     } catch (error) {
       clog.addLocal(
         'goal.controller',

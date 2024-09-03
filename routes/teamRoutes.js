@@ -128,7 +128,7 @@ router.post('/addMultipleTeams', teamController.addMultipleTeams);
  *                   description: Logo del equipo en formato base64
  *                   example: "iVBORw0KGgoAAAANSUhEUgAA..."
  *     responses:
- *       '201':
+ *       '200':
  *         description: Equipos creados exitosamente
  *         content:
  *           application/json:

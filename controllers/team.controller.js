@@ -68,7 +68,7 @@ module.exports = {
       // Crea los equipos en la base de datos
       const newTeams = await Team.bulkCreate(teamsData);
 
-      return res.status(201).json({ message: 'Equipos creados exitosamente', data: newTeams });
+      return res.status(200).json({ message: 'Equipos creados exitosamente', data: newTeams });
     } catch (error) {
       // Manejo de errores y logging
       clog.addLocal('team.controller', 'addMultipleTeamsLogo', `Error al crear los equipos: ${error.message}`, JSON.stringify(req.body));

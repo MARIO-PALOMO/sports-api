@@ -36,7 +36,7 @@ module.exports = {
         const { name, description, active } = req.body;
         try {
             const newSanctionType = await SanctionType.create({ name, description, active });
-            return res.status(201).json({ message: 'Tipo de sanción creado exitosamente', data: newSanctionType });
+            return res.status(200).json({ message: 'Tipo de sanción creado exitosamente', data: newSanctionType });
         } catch (error) {
             const errorMessage = `Error al crear el tipo de sanción: ${error.message}`;
             clog.addLocal('sanctiontype.controller', 'createSanctionType', errorMessage, JSON.stringify(error));
@@ -49,7 +49,7 @@ module.exports = {
         const { sanctionTypes } = req.body;
         try {
             const newSanctionTypes = await SanctionType.bulkCreate(sanctionTypes);
-            return res.status(201).json({ message: 'Múltiples tipos de sanción creados exitosamente', data: newSanctionTypes });
+            return res.status(200).json({ message: 'Múltiples tipos de sanción creados exitosamente', data: newSanctionTypes });
         } catch (error) {
             const errorMessage = `Error al crear múltiples tipos de sanción: ${error.message}`;
             clog.addLocal('sanctiontype.controller', 'createMultipleSanctionTypes', errorMessage, JSON.stringify(error));

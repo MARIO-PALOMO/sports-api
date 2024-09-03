@@ -368,7 +368,7 @@ router.get('/:id', matchController.getMatchById);
  *                 description: Nombre del campo para el registro de schedules.
  *                 example: Campo A
  *     responses:
- *       201:
+ *       200:
  *         description: Partido creado exitosamente y registros de schedules y results añadidos.
  *         content:
  *           application/json:
@@ -541,7 +541,7 @@ router.post('/addMatch', matchController.addMatch);
  *                     start_time: "17:00"
  *                     field_name: "Estadio Municipal"
  *     responses:
- *       '201':
+ *       '200':
  *         description: Partidos agregados exitosamente
  *         content:
  *           application/json:

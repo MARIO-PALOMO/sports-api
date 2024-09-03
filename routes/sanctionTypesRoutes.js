@@ -87,7 +87,7 @@ router.get('/:id', santionTypeController.getSanctionTypeById);
  *             description: Tarjeta roja
  *             active: true
  *     responses:
- *       201:
+ *       200:
  *         description: Tipo de sanción creado exitosamente
  *         content:
  *           application/json:
@@ -124,7 +124,7 @@ router.post('/addSanctionType', santionTypeController.addSanctionType);
  *                 description: Tarjeta amarilla
  *                 active: true
  *     responses:
- *       201:
+ *       200:
  *         description: Múltiples tipos de sanción creados exitosamente
  *         content:
  *           application/json:

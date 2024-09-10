@@ -144,6 +144,7 @@ module.exports = {
         match_id,
         team_id: goal.player.team.id,
         team_name: goal.player.team.name,
+        team_logo: goal.player.team.logo,
         player_id: goal.player.id,
         player_name: goal.player.name,
         player_number: goal.player.player_number,

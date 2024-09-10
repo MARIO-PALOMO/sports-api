@@ -42,6 +42,22 @@ module.exports = (sequelize) => {
         },
       },
     },
+    logo: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,  // El código debe ser único
+      validate: {
+        notEmpty: { msg: 'El código no puede estar vacío' },
+        len: {
+          args: [1, 50],  // Suponiendo un límite de longitud para el código
+          msg: 'El código debe tener entre 1 y 50 caracteres',
+        },
+      },
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

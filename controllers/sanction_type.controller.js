@@ -3,10 +3,11 @@ const { SanctionType } = require('../models');
 const clog = require('./log.controller');
 
 module.exports = {
+
     // Obtener todos los registros
     getAllSanctionTypes: async (req, res) => {
         try {
-            const sanctionTypes = await SanctionType.findAll();
+            const sanctionTypes = await SanctionType.findAll({ order: [['order', 'ASC']] });
             return res.status(200).json({ message: 'Tipos de sanciones encontradas', data: sanctionTypes });
         } catch (error) {
             const errorMessage = `Error al consultar tipos de sanciones: ${error.message}`;

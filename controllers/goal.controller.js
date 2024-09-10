@@ -124,7 +124,7 @@ module.exports = {
               {
                 model: Team,
                 as: 'team',
-                attributes: ['id', 'name'], // Incluir id y nombre del equipo
+                attributes: ['id', 'name', 'logo'], // Incluir id y nombre del equipo
               },
             ],
           },

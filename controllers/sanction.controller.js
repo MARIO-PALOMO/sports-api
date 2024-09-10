@@ -309,7 +309,7 @@ module.exports = {
                             {
                                 model: Team,
                                 as: 'team',
-                                attributes: ['id', 'name'],
+                                attributes: ['id', 'name', 'logo'],
                             }
                         ]
                     }

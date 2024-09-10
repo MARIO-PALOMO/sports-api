@@ -11,48 +11,6 @@ const goalController = require('../controllers/goal.controller');
 
 /**
  * @swagger
- * /goals/getGoalsByMatch/{match_id}:
- *   get:
- *     summary: Obtiene todos los goles de un partido específico
- *     description: Devuelve todos los registros de goles de un partido en particular, incluyendo la información del partido y del jugador asociado a cada gol.
- *     tags: [Gestión de Goles]
- *     parameters:
- *       - in: path
- *         name: match_id
- *         required: true
- *         description: El ID del partido del cual se quieren obtener los goles.
- *         schema:
- *           type: string
- *           example: "cb0f4877-d7d7-4a72-a4d4-a99fd5d8eac8"
- *     responses:
- *       200:
- *         description: Lista de goles encontrados para el partido.
- *         content:
- *           application/json:
- *             example:
- *               message: "Goles encontrados"
- *               data:
- *                 - id: "1c920b6b-e8f8-4e25-b92e-bc2d8b74f539"
- *                   match_id: "cb0f4877-d7d7-4a72-a4d4-a99fd5d8eac8"
- *                   player_id: "60e314d4-c247-4318-b65d-8a185342c838"
- *                   match:
- *                     id: "cb0f4877-d7d7-4a72-a4d4-a99fd5d8eac8"
- *                     name: "Final Match"
- *                   player:
- *                     id: "60e314d4-c247-4318-b65d-8a185342c838"
- *                     name: "Player One"
- *       500:
- *         description: Error al consultar los goles del partido.
- *         content:
- *           application/json:
- *             example:
- *               message: "Error al consultar los goles del partido"
- *               data: "Error message here"
- */
-router.get('/getGoalsByMatch/:match_id', goalController.getGoalsByMatch);
-
-/**
- * @swagger
  * /goals/getTopScorers:
  *   get:
  *     summary: Obtiene un listado de goleadores
@@ -87,6 +45,73 @@ router.get('/getGoalsByMatch/:match_id', goalController.getGoalsByMatch);
  *               data: "Detalles del error"
  */
 router.get('/getTopScorers', goalController.getTopScorers);
+
+/**
+ * @swagger
+ * /goals/getGoalsByMatch/{match_id}:
+ *   get:
+ *     summary: Obtiene la cantidad de goles agrupados por jugador para un partido específico.
+ *     description: Recupera la cantidad total de goles por jugador para el partido identificado por match_id.
+ *     tags: [Gestión de Goles]
+ *     parameters:
+ *       - name: match_id
+ *         in: path
+ *         description: ID del partido para el cual se desea obtener la cantidad de goles por jugador.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de goles agrupados por jugador para el partido especificado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Goles encontrados para el partido
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       match_id:
+ *                         type: string
+ *                         example: "match123"
+ *                       team_id:
+ *                         type: string
+ *                         example: "team456"
+ *                       team_name:
+ *                         type: string
+ *                         example: "Team A"
+ *                       player_id:
+ *                         type: string
+ *                         example: "player789"
+ *                       player_name:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       player_number:
+ *                         type: integer
+ *                         example: 10
+ *                       goal_count:
+ *                         type: integer
+ *                         example: 5
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error al consultar los goles por partido
+ *                 data:
+ *                   type: string
+ *                   example: Descripción del error
+ */
+router.get('/getGoalsByMatch/:match_id', goalController.getGoalsByMatch);
 
 /**
  * @swagger

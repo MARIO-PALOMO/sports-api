@@ -3,53 +3,6 @@ const clog = require("./log.controller");
 
 module.exports = {
 
-  async getGoalsByMatch(req, res) {
-    try {
-      const { match_id } = req.params; // Obtener el ID del partido desde los parámetros de la solicitud
-
-      // Validar que el match_id no esté vacío
-      if (!match_id) {
-        return res.status(200).json({ message: 'El match_id es requerido', data: null });
-      }
-
-      // Buscar todos los goles relacionados con el partido
-      const goals = await Goal.findAll({
-        where: { match_id },
-        include: [
-          {
-            model: Match,
-            as: 'match',
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
-          },
-          {
-            model: Player,
-            as: 'player',
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
-          },
-        ],
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        order: [['createdAt', 'ASC']],
-      });
-
-      // Verificar si se encontraron goles
-      if (goals.length === 0) {
-        return res.status(200).json({ message: 'No se encontraron goles para este partido', data: null });
-      }
-
-      // Respuesta con los goles encontrados
-      res.status(200).json({ message: 'Goles encontrados', data: goals });
-    } catch (error) {
-      // Manejo de errores y logging
-      clog.addLocal(
-        'goal.controller',
-        'getGoalsByMatch',
-        'Error al consultar los goles del partido: ' + error.message,
-        'Error al consultar los goles del partido'
-      );
-      res.status(500).json({ message: 'Error al consultar los goles del partido', data: error.message });
-    }
-  },
-  
   async getTopScorers(req, res) {
     try {
       // Obtener todos los goles agrupados por jugador y contar la cantidad de goles
@@ -105,6 +58,112 @@ module.exports = {
     }
   },
 
+  /*async getGoalsByMatch(req, res) {
+    try {
+      const { match_id } = req.params; // Obtener el ID del partido desde los parámetros de la solicitud
+
+      // Validar que el match_id no esté vacío
+      if (!match_id) {
+        return res.status(200).json({ message: 'El match_id es requerido', data: null });
+      }
+
+      // Buscar todos los goles relacionados con el partido
+      const goals = await Goal.findAll({
+        where: { match_id },
+        include: [
+          {
+            model: Match,
+            as: 'match',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: Player,
+            as: 'player',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+        ],
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        order: [['createdAt', 'ASC']],
+      });
+
+      // Verificar si se encontraron goles
+      if (goals.length === 0) {
+        return res.status(200).json({ message: 'No se encontraron goles para este partido', data: null });
+      }
+
+      // Respuesta con los goles encontrados
+      res.status(200).json({ message: 'Goles encontrados', data: goals });
+    } catch (error) {
+      // Manejo de errores y logging
+      clog.addLocal(
+        'goal.controller',
+        'getGoalsByMatch',
+        'Error al consultar los goles del partido: ' + error.message,
+        'Error al consultar los goles del partido'
+      );
+      res.status(500).json({ message: 'Error al consultar los goles del partido', data: error.message });
+    }
+  }, */
+
+  async getGoalsByMatch(req, res) {
+    try {
+      const { match_id } = req.params; // Obtener el match_id desde los parámetros de la solicitud
+  
+      // Obtener todos los goles agrupados por jugador y contar la cantidad de goles para el partido específico
+      const goalsByMatch = await Goal.findAll({
+        attributes: [
+          'player_id',
+          [sequelize.fn('COUNT', sequelize.col('player_id')), 'goalCount'], // Contar la cantidad de goles por jugador
+        ],
+        include: [
+          {
+            model: Player,
+            as: 'player',
+            attributes: ['id', 'name', 'player_number'], // Incluir id, nombre y número del jugador
+            include: [
+              {
+                model: Team,
+                as: 'team',
+                attributes: ['id', 'name'], // Incluir id y nombre del equipo
+              },
+            ],
+          },
+        ],
+        where: { match_id }, // Filtrar por el partido específico
+        group: ['player_id', 'player.id', 'player.team.id'], // Agrupar por jugador y equipo
+        order: [[sequelize.literal('"goalCount"'), 'DESC']], // Ordenar por cantidad de goles
+      });
+  
+      // Verificar si se encontraron goles para el partido
+      if (goalsByMatch.length === 0) {
+        return res.status(200).json({ message: 'No se encontraron goles para este partido', data: null });
+      }
+  
+      // Formatear la respuesta para incluir solo la información solicitada
+      const response = goalsByMatch.map((goal) => ({
+        match_id,
+        team_id: goal.player.team.id,
+        team_name: goal.player.team.name,
+        player_id: goal.player.id,
+        player_name: goal.player.name,
+        player_number: goal.player.player_number,
+        goal_count: goal.getDataValue('goalCount'), // Obtener la cantidad de goles calculada
+      }));
+  
+      // Respuesta con los goles encontrados
+      res.status(200).json({ message: 'Goles encontrados para el partido', data: response });
+    } catch (error) {
+      console.log(error);
+      clog.addLocal(
+        'goal.controller',
+        'getGoalsByMatch',
+        'Error al consultar los goles por partido: ' + error.message,
+        'Error al consultar los goles por partido'
+      );
+      res.status(500).json({ message: 'Error al consultar los goles por partido', data: error.message });
+    }
+  },  
+  
   async getTopScorersByTeam(req, res) {
     try {
       const { team_id } = req.params; // Obtener el team_id desde los parámetros de la solicitud

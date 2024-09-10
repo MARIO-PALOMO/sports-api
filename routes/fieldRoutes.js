@@ -98,17 +98,6 @@ router.get('/getAll', fieldController.getAll);
  *                     updatedAt:
  *                       type: string
  *                       format: date-time
- *       404:
- *         description: Cancha deportiva no encontrada
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 data:
- *                   type: null
  *       500:
  *         description: Error al consultar cancha deportiva por ID
  *         content:
@@ -232,17 +221,6 @@ router.post('/addField', fieldController.addField);
  *                       updatedAt:
  *                         type: string
  *                         format: date-time
- *       400:
- *         description: El campo fields debe ser un array y no estar vacío.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 data:
- *                   type: null
  *       500:
  *         description: Error al agregar múltiples canchas deportivas
  *         content:

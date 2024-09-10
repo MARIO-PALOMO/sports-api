@@ -76,7 +76,7 @@ module.exports = {
             const round = await Round.findOne({ where: { code }, attributes: ['id'] });
 
             if (!round) {
-                return res.status(404).json({ message: 'Ronda no encontrada', data: null });
+                return res.status(200).json({ message: 'Ronda no encontrada', data: null });
             }
 
             // Obtener el listado de partidos para la ronda encontrada
@@ -199,7 +199,7 @@ module.exports = {
 
             // Verificar si el partido fue encontrado
             if (!match) {
-                return res.status(404).json({ message: 'Partido no encontrado', data: null });
+                return res.status(200).json({ message: 'Partido no encontrado', data: null });
             }
 
             res.json({ message: 'Partido encontrado', data: match });
@@ -222,18 +222,18 @@ module.exports = {
 
             // Validación: Asegurarse de que todos los campos requeridos estén presentes
             if (!home_team_id || !away_team_id || !competition_id || !roundCode || !match_date || !start_time || !field_name) {
-                return res.status(400).json({ message: 'Todos los campos son requeridos', data: null });
+                return res.status(200).json({ message: 'Todos los campos son requeridos', data: null });
             }
 
             // Validar formato de match_date
             if (isNaN(Date.parse(match_date))) {
-                return res.status(400).json({ message: 'Formato de fecha inválido', data: null });
+                return res.status(200).json({ message: 'Formato de fecha inválido', data: null });
             }
 
             // Validar formato de start_time
             const timeParts = start_time.split(':');
             if (timeParts.length !== 2 || isNaN(parseInt(timeParts[0])) || isNaN(parseInt(timeParts[1])) || parseInt(timeParts[0]) > 23 || parseInt(timeParts[1]) > 59) {
-                return res.status(400).json({ message: 'Formato de hora inválido', data: null });
+                return res.status(200).json({ message: 'Formato de hora inválido', data: null });
             }
 
             // Realizar búsquedas simultáneamente para reducir el tiempo de espera
@@ -247,27 +247,27 @@ module.exports = {
             ]);
 
             if (!round) {
-                return res.status(400).json({ message: 'Código de ronda inválido', data: null });
+                return res.status(200).json({ message: 'Código de ronda inválido', data: null });
             }
 
             if (!pendingState) {
-                return res.status(400).json({ message: 'Estado "Pendiente" no encontrado', data: null });
+                return res.status(200).json({ message: 'Estado "Pendiente" no encontrado', data: null });
             }
 
             if (!field) {
-                return res.status(400).json({ message: 'Campo de juego no encontrado', data: null });
+                return res.status(200).json({ message: 'Campo de juego no encontrado', data: null });
             }
 
             if (!homeTeam) {
-                return res.status(400).json({ message: 'Equipo local no encontrado', data: null });
+                return res.status(200).json({ message: 'Equipo local no encontrado', data: null });
             }
 
             if (!awayTeam) {
-                return res.status(400).json({ message: 'Equipo visitante no encontrado', data: null });
+                return res.status(200).json({ message: 'Equipo visitante no encontrado', data: null });
             }
 
             if (!competition) {
-                return res.status(400).json({ message: 'Competición no encontrada', data: null });
+                return res.status(200).json({ message: 'Competición no encontrada', data: null });
             }
 
             // Crear el partido dentro de la transacción
@@ -325,7 +325,7 @@ module.exports = {
 
             // Validar que se ha proporcionado una lista de partidos
             if (!Array.isArray(matches) || matches.length === 0) {
-                return res.status(400).json({ message: 'Se requiere una lista de partidos', data: null });
+                return res.status(200).json({ message: 'Se requiere una lista de partidos', data: null });
             }
 
             // Validar todos los partidos en la lista
@@ -333,16 +333,16 @@ module.exports = {
                 const { home_team_id, away_team_id, competition_id, roundCode, match_date, start_time, field_name } = matchData;
 
                 if (!home_team_id || !away_team_id || !competition_id || !roundCode || !match_date || !start_time || !field_name) {
-                    return res.status(400).json({ message: 'Todos los campos son requeridos para todos los partidos', data: null });
+                    return res.status(200).json({ message: 'Todos los campos son requeridos para todos los partidos', data: null });
                 }
 
                 if (isNaN(Date.parse(match_date))) {
-                    return res.status(400).json({ message: 'Formato de fecha inválido para uno de los partidos', data: null });
+                    return res.status(200).json({ message: 'Formato de fecha inválido para uno de los partidos', data: null });
                 }
 
                 const timeParts = start_time.split(':');
                 if (timeParts.length !== 2 || isNaN(parseInt(timeParts[0])) || isNaN(parseInt(timeParts[1])) || parseInt(timeParts[0]) > 23 || parseInt(timeParts[1]) > 59) {
-                    return res.status(400).json({ message: 'Formato de hora inválido para uno de los partidos', data: null });
+                    return res.status(200).json({ message: 'Formato de hora inválido para uno de los partidos', data: null });
                 }
             }
 
@@ -370,27 +370,27 @@ module.exports = {
                 const { home_team_id, away_team_id, competition_id, roundCode, match_date, start_time, field_name } = matchData;
 
                 if (!roundMap.has(roundCode)) {
-                    return res.status(400).json({ message: `Código de ronda inválido para uno de los partidos`, data: null });
+                    return res.status(200).json({ message: `Código de ronda inválido para uno de los partidos`, data: null });
                 }
 
                 if (!pendingState) {
-                    return res.status(400).json({ message: `Estado "Pendiente" no encontrado`, data: null });
+                    return res.status(200).json({ message: `Estado "Pendiente" no encontrado`, data: null });
                 }
 
                 if (!fieldMap.has(field_name)) {
-                    return res.status(400).json({ message: `Campo de juego no encontrado para uno de los partidos`, data: null });
+                    return res.status(200).json({ message: `Campo de juego no encontrado para uno de los partidos`, data: null });
                 }
 
                 if (!homeTeamMap.has(home_team_id)) {
-                    return res.status(400).json({ message: `Equipo local no encontrado para uno de los partidos`, data: null });
+                    return res.status(200).json({ message: `Equipo local no encontrado para uno de los partidos`, data: null });
                 }
 
                 if (!awayTeamMap.has(away_team_id)) {
-                    return res.status(400).json({ message: `Equipo visitante no encontrado para uno de los partidos`, data: null });
+                    return res.status(200).json({ message: `Equipo visitante no encontrado para uno de los partidos`, data: null });
                 }
 
                 if (!competitionMap.has(competition_id)) {
-                    return res.status(400).json({ message: `Competición no encontrada para uno de los partidos`, data: null });
+                    return res.status(200).json({ message: `Competición no encontrada para uno de los partidos`, data: null });
                 }
 
                 // Crear el partido dentro de la transacción

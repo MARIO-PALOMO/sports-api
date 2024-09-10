@@ -21,7 +21,7 @@ module.exports = {
         try {
             const sanctionType = await SanctionType.findByPk(id);
             if (!sanctionType) {
-                return res.status(404).json({ message: 'Tipo de sanción no encontrado', data: null });
+                return res.status(200).json({ message: 'Tipo de sanción no encontrado', data: null });
             }
             return res.status(200).json({ message: 'Tipo de sanción encontrado', data: sanctionType });
         } catch (error) {

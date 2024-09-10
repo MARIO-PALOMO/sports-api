@@ -20,7 +20,7 @@ exports.add = async (req, res, next) => {
         const payload = req.body?.payload;
 
         if (!entity || !method || !error || !error || !payload) {
-            return res.status(400).json({ data: null, message: 'All fields are required' });
+            return res.status(200).json({ data: null, message: 'All fields are required' });
         }
         const add = await mlog.create({
             id: uuidv4(),
@@ -41,7 +41,7 @@ exports.addLocal = async (entity, method, error, payload) => {
     try {
 
         if (!entity || !method || !error || !error || !payload) {
-            return res.status(400).json({ data: null, message: 'All fields are required' });
+            return res.status(200).json({ data: null, message: 'All fields are required' });
         }
         const add = await mlog.create({
             id: uuidv4(),

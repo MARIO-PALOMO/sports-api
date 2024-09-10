@@ -78,10 +78,6 @@ const sanctionController = require('../controllers/sanction.controller');
  *                       away_team_id:
  *                         type: string
  *                         format: uuid
- *       400:
- *         description: Solicitud inválida si el ID del partido no está proporcionado.
- *       404:
- *         description: Partido no encontrado o no hay sanciones para el partido proporcionado.
  *       500:
  *         description: Error interno del servidor.
  */
@@ -120,20 +116,6 @@ router.get('/getSanctionsByMatch/:match_id', sanctionController.getSanctionsByMa
  *                     - "abc12345-def6-7890-gh12-ijklmnopqrst"
  *                     - "uvwx1234-yzab-5678-cdef-ghijklmnopqr"
  *               message: "Sanciones obtenidas con éxito."
- *       400:
- *         description: El ID del tipo de sanción es requerido.
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               message: "El ID del tipo de sanción es requerido."
- *       404:
- *         description: Tipo de sanción no encontrado.
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               message: "Tipo de sanción no encontrado."
  *       500:
  *         description: Error interno del servidor al obtener las sanciones.
  *         content:
@@ -165,7 +147,7 @@ router.get('/getSanctionsByType/:sanction_type_id', sanctionController.getSancti
  *         schema:
  *           type: string
  *     responses:
- *       '200':
+ *       200:
  *         description: Sanciones obtenidas con éxito.
  *         content:
  *           application/json:
@@ -203,32 +185,6 @@ router.get('/getSanctionsByType/:sanction_type_id', sanctionController.getSancti
  *                 message:
  *                   type: string
  *                   example: 'Sanciones obtenidas con éxito.'
- *       '400':
- *         description: Error de solicitud, falta de parámetros.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: object
- *                   example: null
- *                 message:
- *                   type: string
- *                   example: 'El ID del tipo de sanción es requerido.'
- *       '404':
- *         description: Recurso no encontrado.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: object
- *                   example: null
- *                 message:
- *                   type: string
- *                   example: 'Tipo de sanción no encontrado.'
  *       '500':
  *         description: Error interno del servidor.
  *         content:
@@ -244,5 +200,54 @@ router.get('/getSanctionsByType/:sanction_type_id', sanctionController.getSancti
  *                   example: 'Ocurrió un error al obtener las sanciones. Por favor, inténtelo nuevamente.'
  */
 router.get('/getSanctionsByTypeAndTeam/:sanction_type_id/:team_id', sanctionController.getSanctionsByTypeAndTeam);
+
+/**
+ * @swagger
+ * /sanctions/getSanctionsByTypeAndMatch/{sanction_type_id}/{match_id}:
+ *   get:
+ *     summary: Obtiene sanciones por tipo y partido
+ *     description: Retorna un listado de sanciones agrupadas por jugador, basadas en el tipo de sanción y el ID del partido.
+ *     tags: [Sanciones]
+ *     parameters:
+ *       - in: path
+ *         name: sanction_type_id
+ *         required: true
+ *         description: ID del tipo de sanción
+ *         schema:
+ *           type: string
+ *           example: "d3b07384-d9a3-4f41-b70d-9b81dcaef7c1"
+ *       - in: path
+ *         name: match_id
+ *         required: true
+ *         description: ID del partido
+ *         schema:
+ *           type: string
+ *           example: "5d2e1931-8b1a-4f29-8a5c-002fc0c1f785"
+ *     responses:
+ *       200:
+ *         description: Listado de sanciones agrupadas por jugador
+ *         content:
+ *           application/json:
+ *             example:
+ *               data:
+ *                 - player_id: "12345"
+ *                   player_name: "Juan Pérez"
+ *                   player_number: 9
+ *                   team_id: "67890"
+ *                   team_name: "Equipo A"
+ *                   sanctions_count: 2
+ *                   match_ids:
+ *                     - "abcd1234"
+ *                     - "efgh5678"
+ *               message: "Sanciones obtenidas con éxito."
+ *       500:
+ *         description: Error al obtener las sanciones
+ *         content:
+ *           application/json:
+ *             example:
+ *               data: null
+ *               message: "Ocurrió un error al obtener las sanciones. Por favor, inténtelo nuevamente."
+ */
+router.get('/getSanctionsByTypeAndMatch/:sanction_type_id/:match_id', sanctionController.getSanctionsByTypeAndMatch);
 
 module.exports = router;

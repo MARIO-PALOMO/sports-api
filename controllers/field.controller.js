@@ -24,7 +24,7 @@ module.exports = {
             const field = await Field.findByPk(id);
 
             if (!field) {
-                return res.status(404).json({ data: null, message: 'Cancha Deportiva no encontrada' });
+                return res.status(200).json({ data: null, message: 'Cancha Deportiva no encontrada' });
             }
 
             // Responder con el registro encontrado
@@ -53,7 +53,7 @@ module.exports = {
 
             // Validar que `fields` sea un array y no esté vacío
             if (!Array.isArray(fields) || fields.length === 0) {
-                return res.status(400).json({ data: null, message: 'El campo fields debe ser un array y no estar vacío.' });
+                return res.status(200).json({ data: null, message: 'El campo fields debe ser un array y no estar vacío.' });
             }
 
             // Crear múltiples registros de Field

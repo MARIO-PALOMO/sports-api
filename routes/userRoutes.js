@@ -96,8 +96,6 @@ router.post('/login', userController.get);
  *     responses:
  *       200:
  *         description: Usuario agregado exitosamente
- *       400:
- *         description: Error en la solicitud
  */
 router.post('/add', userController.add);
 

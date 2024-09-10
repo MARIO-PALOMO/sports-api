@@ -20,8 +20,8 @@ module.exports = {
   async getTeamById(req, res) {
     try {
       const team = await Team.findByPk(req.params.id);
-      if (!team) return res.status(404).json({ message: 'Equipo no encontrado', data: null });
-      if (!team.active) return res.status(404).json({ message: 'Equipo no activo', data: null });
+      if (!team) return res.status(200).json({ message: 'Equipo no encontrado', data: null });
+      if (!team.active) return res.status(200).json({ message: 'Equipo no activo', data: null });
       return res.status(200).json({ message: 'Equipo encontrado', data: team });
     } catch (error) {
       clog.addLocal('team.controller', 'getTeamById', 'Error al consultar el equipo: ' + error, JSON.stringify(req));
@@ -84,7 +84,7 @@ module.exports = {
       const team = await Team.findByPk(id);
 
       if (!team) {
-        return res.status(404).json({ data: null, message: 'Equipo no encontrado' });
+        return res.status(200).json({ data: null, message: 'Equipo no encontrado' });
       }
 
       await team.update({ name, coach });
@@ -103,7 +103,7 @@ module.exports = {
       const team = await Team.findByPk(id);
 
       if (!team) {
-        return res.status(404).json({ data: null, message: 'Equipo no encontrado' });
+        return res.status(200).json({ data: null, message: 'Equipo no encontrado' });
       }
 
       await team.update({ logo });
@@ -121,7 +121,7 @@ module.exports = {
       const { name, coach, logo } = req.body;
 
       const team = await Team.findByPk(id);
-      if (!team) return res.status(404).json({ message: 'Equipo no encontrado', data: null });
+      if (!team) return res.status(200).json({ message: 'Equipo no encontrado', data: null });
 
       if (name || coach) await team.update({ name, coach });
       if (logo) await team.update({ logo: getRandomLogo() });
@@ -138,7 +138,7 @@ module.exports = {
     try {
       const { id } = req.params;
       const deleted = await Team.destroy({ where: { id } });
-      if (!deleted) return res.status(404).json({ message: 'Equipo no encontrado', data: null });
+      if (!deleted) return res.status(200).json({ message: 'Equipo no encontrado', data: null });
       return res.status(200).json({ message: 'Equipo eliminado exitosamente', data: null });
     } catch (error) {
       clog.addLocal('team.controller', 'deleteTeam', 'Error al eliminar el equipo: ' + error, JSON.stringify(req));

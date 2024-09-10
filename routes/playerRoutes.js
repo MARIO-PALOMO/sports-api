@@ -99,19 +99,6 @@ router.get('/getAll', playerController.getAllPlayers);
  *                           logo:
  *                             type: string
  *                             format: base64
- *       404:
- *         description: No se encontraron jugadores para este equipo
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: No se encontraron jugadores para este equipo
- *                 data:
- *                   type: null
- *                   example: null
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -156,13 +143,6 @@ router.get('/:teamId/getAllPlayersByTeamId', playerController.getAllPlayersByTea
  *                 player_number: "10"
  *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
  *                 photo: "base64string"
- *       404:
- *         description: Jugador no encontrado
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               message: "Jugador no encontrado"
  *       500:
  *         description: Error al consultar jugador
  *         content:
@@ -204,20 +184,6 @@ router.get('/:id', playerController.getPlayerById);
  *                 player_number: "10"
  *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
  *                 photo: "base64string"
- *       400:
- *         description: Error al crear jugador
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               error: "Error al crear jugador"
- *       404:
- *         description: Equipo no encontrado
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               error: "Equipo no encontrado."
  */
 router.post('/addPlayer', playerController.addPlayer);
 
@@ -292,18 +258,6 @@ router.post('/addPlayer', playerController.addPlayer);
  *                       photo:
  *                         type: string
  *                         example: "base64string"
- *       400:
- *         description: Error al crear jugadores
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: 'null'
- *                 error:
- *                   type: string
- *                   example: "Error al crear jugador: Equipo no encontrado: Team X"
  *       500:
  *         description: Error al cargar la foto predeterminada o error interno
  *         content:
@@ -357,20 +311,6 @@ router.post('/addMultiplePlayers', playerController.addMultiplePlayers);
  *                 player_number: "10"
  *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
  *                 photo: "base64string"
- *       400:
- *         description: Error al actualizar jugador
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               error: "Error al actualizar jugador"
- *       404:
- *         description: Jugador no encontrado
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               message: "Jugador no encontrado"
  *       500:
  *         description: Error al cargar la foto predeterminada
  *         content:
@@ -415,20 +355,6 @@ router.put('/:id/updatePlayer', playerController.updatePlayer);
  *                 player_number: "10"
  *                 team_id: "b9b8d8b8-9f71-4ad6-b5bc-4f7e1e2f1b1d"
  *                 photo: "base64string"
- *       400:
- *         description: Error al actualizar la foto del jugador
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               error: "Error al actualizar la foto del jugador"
- *       404:
- *         description: Jugador no encontrado
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               message: "Jugador no encontrado"
  */
 router.put('/:id/updatePlayerPhoto', playerController.updatePlayerPhoto);
 
@@ -452,20 +378,6 @@ router.put('/:id/updatePlayerPhoto', playerController.updatePlayerPhoto);
  *           application/json:
  *             example:
  *               message: Jugador eliminado exitosamente
- *       400:
- *         description: Error al eliminar jugador
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               error: "Error al eliminar jugador"
- *       404:
- *         description: Jugador no encontrado
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               message: "Jugador no encontrado"
  */
 router.delete('/:id/deletePlayer', playerController.deletePlayer);
 
@@ -490,20 +402,6 @@ router.delete('/:id/deletePlayer', playerController.deletePlayer);
  *           application/json:
  *             example:
  *               message: Jugadores eliminados exitosamente
- *       400:
- *         description: Error al eliminar jugadores
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               error: "Error al eliminar jugadores"
- *       404:
- *         description: Jugador(es) no encontrado(s)
- *         content:
- *           application/json:
- *             example:
- *               data: null
- *               message: "Jugador(es) no encontrado(s)"
  */
 router.delete('/deleteMultiplePlayers', playerController.deleteMultiplePlayers);
 

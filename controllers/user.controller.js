@@ -60,7 +60,7 @@ exports.add = async (req, res, next) => {
         const active = req.body?.active;
 
         if (!rol_id || !name || !mail || !password || !photo || !active) {
-            return res.status(400).json({ data: null, message: 'All fields are required' });
+            return res.status(200).json({ data: null, message: 'All fields are required' });
         }
         const add = await user.create({
             id: uuidv4(),

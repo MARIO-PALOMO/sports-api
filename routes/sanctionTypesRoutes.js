@@ -54,13 +54,6 @@ router.get('/getAll', santionTypeController.getAllSanctionTypes);
  *             example:
  *               message: Tipo de sanción encontrado
  *               data: { "id": "uuid", "name": "Amarilla", "description": "Tarjeta amarilla", "active": true, "createdAt": "2023-08-22T10:11:12.000Z", "updatedAt": "2023-08-22T10:11:12.000Z" }
- *       404:
- *         description: Tipo de sanción no encontrado
- *         content:
- *           application/json:
- *             example:
- *               message: Tipo de sanción no encontrado
- *               data: null
  *       500:
  *         description: Error al obtener el tipo de sanción
  *         content:

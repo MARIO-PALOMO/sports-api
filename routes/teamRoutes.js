@@ -43,8 +43,6 @@ router.get('/getAll', teamController.getAll);
  *     responses:
  *       200:
  *         description: Equipo encontrado exitosamente.
- *       404:
- *         description: Equipo no encontrado.
  *       500:
  *         description: Error al consultar el equipo.
  */
@@ -128,7 +126,7 @@ router.post('/addMultipleTeams', teamController.addMultipleTeams);
  *                   description: Logo del equipo en formato base64
  *                   example: "iVBORw0KGgoAAAANSUhEUgAA..."
  *     responses:
- *       '200':
+ *       200:
  *         description: Equipos creados exitosamente
  *         content:
  *           application/json:
@@ -156,16 +154,6 @@ router.post('/addMultipleTeams', teamController.addMultipleTeams);
  *                       logo:
  *                         type: string
  *                         example: "iVBORw0KGgoAAAANSUhEUgAA..."
- *       '400':
- *         description: Error en la solicitud, el campo "logo" es obligatorio
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "El campo 'logo' es obligatorio en cada equipo"
  *       '500':
  *         description: Error interno del servidor al crear los equipos
  *         content:
@@ -204,8 +192,6 @@ router.post('/addMultipleTeamsLogo', teamController.addMultipleTeamsLogo);
  *     responses:
  *       200:
  *         description: Detalles del equipo actualizados exitosamente.
- *       404:
- *         description: Equipo no encontrado.
  *       500:
  *         description: Error al actualizar los detalles del equipo.
  */
@@ -235,8 +221,6 @@ router.put('/:id/updateTeamDetails', teamController.updateTeamDetails);
  *     responses:
  *       200:
  *         description: Logo del equipo actualizado exitosamente.
- *       404:
- *         description: Equipo no encontrado.
  *       500:
  *         description: Error al actualizar el logo del equipo.
  */
@@ -268,8 +252,6 @@ router.put('/:id/updateTeamLogo', teamController.updateTeamLogo);
  *     responses:
  *       200:
  *         description: Equipo actualizado exitosamente.
- *       404:
- *         description: Equipo no encontrado.
  *       500:
  *         description: Error al actualizar el equipo.
  */
@@ -293,8 +275,6 @@ router.put('/:id/updateTeamInfo', teamController.updateTeamInfo);
  *     responses:
  *       200:
  *         description: Equipo eliminado exitosamente.
- *       404:
- *         description: Equipo no encontrado.
  *       500:
  *         description: Error al eliminar el equipo.
  */

@@ -20,7 +20,7 @@ module.exports = {
             const { id } = req.params;
             const competition = await Competition.findByPk(id);
             if (!competition) {
-                return res.status(404).json({ data: null, message: 'Campeonato no encontrado' });
+                return res.status(200).json({ data: null, message: 'Campeonato no encontrado' });
             }
             return res.status(200).json({ message: 'Campeonato encontrado', data: competition });
         } catch (error) {
@@ -48,7 +48,7 @@ module.exports = {
             const competition = await Competition.findByPk(id);
 
             if (!competition) {
-                return res.status(404).json({ data: null, message: 'Campeonato no encontrado' });
+                return res.status(200).json({ data: null, message: 'Campeonato no encontrado' });
             }
 
             await competition.update({ name, description, organizer });
@@ -67,7 +67,7 @@ module.exports = {
             const competition = await Competition.findByPk(id);
 
             if (!competition) {
-                return res.status(404).json({ data: null, message: 'Campeonato no encontrado' });
+                return res.status(200).json({ data: null, message: 'Campeonato no encontrado' });
             }
 
             await competition.update({ start_date, end_date });
@@ -86,7 +86,7 @@ module.exports = {
             const competition = await Competition.findByPk(id);
 
             if (!competition) {
-                return res.status(404).json({ data: null, message: 'Campeonato no encontrado' });
+                return res.status(200).json({ data: null, message: 'Campeonato no encontrado' });
             }
 
             await competition.update({ logo_1, logo_2 });
@@ -104,7 +104,7 @@ module.exports = {
             const competition = await Competition.findByPk(id);
 
             if (!competition) {
-                return res.status(404).json({ data: null, message: 'Campeonato no encontrado' });
+                return res.status(200).json({ data: null, message: 'Campeonato no encontrado' });
             }
 
             await competition.update(req.body);

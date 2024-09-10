@@ -104,7 +104,7 @@ router.get('/getAll', matchController.getAllMatches);
  *         schema:
  *           type: string
  *     responses:
- *       '200':
+ *       200:
  *         description: Listado de partidos de la ronda.
  *         content:
  *           application/json:
@@ -162,18 +162,6 @@ router.get('/getAll', matchController.getAllMatches);
  *                               type: object
  *                       result:
  *                         type: object
- *       '404':
- *         description: Ronda no encontrada.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Ronda no encontrada
- *                 data:
- *                   type: null
  *       '500':
  *         description: Error interno del servidor.
  *         content:
@@ -205,7 +193,7 @@ router.get('/getMatchesByRound/:code', matchController.getMatchesByRound);
  *           type: string
  *           example: 123e4567-e89b-12d3-a456-426614174000
  *     responses:
- *       '200':
+ *       200:
  *         description: Partido encontrado exitosamente.
  *         content:
  *           application/json:
@@ -296,18 +284,6 @@ router.get('/getMatchesByRound/:code', matchController.getMatchesByRound);
  *                         away_score:
  *                           type: integer
  *                           example: 1
- *       '404':
- *         description: Partido no encontrado.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Partido no encontrado
- *                 data:
- *                   type: null
  *       '500':
  *         description: Error interno del servidor.
  *         content:
@@ -443,18 +419,6 @@ router.get('/:id', matchController.getMatchById);
  *                         away_global_score:
  *                           type: integer
  *                           example: 0
- *       400:
- *         description: Solicitud incorrecta debido a datos faltantes o inválidos.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Todos los campos son requeridos
- *                 data:
- *                   type: null
  *       500:
  *         description: Error interno del servidor al procesar la solicitud.
  *         content:
@@ -541,7 +505,7 @@ router.post('/addMatch', matchController.addMatch);
  *                     start_time: "17:00"
  *                     field_name: "Estadio Municipal"
  *     responses:
- *       '200':
+ *       200:
  *         description: Partidos agregados exitosamente
  *         content:
  *           application/json:
@@ -581,18 +545,6 @@ router.post('/addMatch', matchController.addMatch);
  *                         format: date-time
  *                         description: Fecha y hora del partido en formato ISO 8601.
  *                         example: "2024-08-30T15:00:00Z"
- *       '400':
- *         description: Error de validación. Uno o más campos son inválidos o faltan.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Todos los campos son requeridos para todos los partidos"
- *                 data:
- *                   type: null
  *       '500':
  *         description: Error interno del servidor. Ocurrió un problema al procesar la solicitud.
  *         content:

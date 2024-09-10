@@ -9,7 +9,7 @@ module.exports = {
 
       // Validar que el match_id no esté vacío
       if (!match_id) {
-        return res.status(400).json({ message: 'El match_id es requerido', data: null });
+        return res.status(200).json({ message: 'El match_id es requerido', data: null });
       }
 
       // Buscar todos los goles relacionados con el partido
@@ -33,7 +33,7 @@ module.exports = {
 
       // Verificar si se encontraron goles
       if (goals.length === 0) {
-        return res.status(404).json({ message: 'No se encontraron goles para este partido', data: null });
+        return res.status(200).json({ message: 'No se encontraron goles para este partido', data: null });
       }
 
       // Respuesta con los goles encontrados
@@ -78,7 +78,7 @@ module.exports = {
 
       // Verificar si se encontraron goleadores
       if (topScorers.length === 0) {
-        return res.status(404).json({ message: 'No se encontraron goleadores', data: null });
+        return res.status(200).json({ message: 'No se encontraron goleadores', data: null });
       }
 
       // Formatear la respuesta para incluir solo la información solicitada
@@ -136,7 +136,7 @@ module.exports = {
 
       // Verificar si se encontraron goleadores
       if (topScorers.length === 0) {
-        return res.status(404).json({ message: 'No se encontraron goleadores para este equipo', data: null });
+        return res.status(200).json({ message: 'No se encontraron goleadores para este equipo', data: null });
       }
 
       // Formatear la respuesta para incluir solo la información solicitada
@@ -169,7 +169,7 @@ module.exports = {
 
       // Validar que match_id y player_ids no estén vacíos
       if (!match_id || !Array.isArray(player_ids) || player_ids.length === 0) {
-        return res.status(400).json({ message: 'El match_id y un array con al menos un player_id son requeridos', data: null });
+        return res.status(200).json({ message: 'El match_id y un array con al menos un player_id son requeridos', data: null });
       }
 
       // Verificar si el partido con el match_id existe
@@ -182,7 +182,7 @@ module.exports = {
       });
 
       if (!match) {
-        return res.status(404).json({ message: 'Partido no encontrado', data: null });
+        return res.status(200).json({ message: 'Partido no encontrado', data: null });
       }
 
       // Obtener los equipos que participan en el partido
@@ -198,7 +198,7 @@ module.exports = {
       });
 
       if (players.length !== player_ids.length) {
-        return res.status(400).json({ message: 'Algunos jugadores no pertenecen a los equipos del partido', data: null });
+        return res.status(200).json({ message: 'Algunos jugadores no pertenecen a los equipos del partido', data: null });
       }
 
       // Crear los registros de goles

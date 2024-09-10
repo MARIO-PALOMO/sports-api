@@ -21,7 +21,7 @@ module.exports = {
             const { id } = req.params;
             const round = await Round.findByPk(id);
             if (!round) {
-                return res.status(404).json({ message: 'Eliminatoria no encontrado', data: null });
+                return res.status(200).json({ message: 'Eliminatoria no encontrado', data: null });
             }
             return res.status(200).json({ message: 'Eliminatoria encontrada', data: round });
         } catch (error) {
@@ -48,7 +48,7 @@ module.exports = {
 
             // Validar que `rounds` sea un array y no esté vacío
             if (!Array.isArray(rounds) || rounds.length === 0) {
-                return res.status(400).json({ data: null, message: 'El campo rounds debe ser un array y no estar vacío.' });
+                return res.status(200).json({ data: null, message: 'El campo rounds debe ser un array y no estar vacío.' });
             }
 
             // Crear múltiples registros de Round

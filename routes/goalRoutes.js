@@ -41,20 +41,6 @@ const goalController = require('../controllers/goal.controller');
  *                   player:
  *                     id: "60e314d4-c247-4318-b65d-8a185342c838"
  *                     name: "Player One"
- *       400:
- *         description: Error de validación, el `match_id` no está presente en la solicitud.
- *         content:
- *           application/json:
- *             example:
- *               message: "El match_id es requerido"
- *               data: null
- *       404:
- *         description: No se encontraron goles para el partido especificado.
- *         content:
- *           application/json:
- *             example:
- *               message: "No se encontraron goles para este partido"
- *               data: null
  *       500:
  *         description: Error al consultar los goles del partido.
  *         content:
@@ -92,13 +78,6 @@ router.get('/getGoalsByMatch/:match_id', goalController.getGoalsByMatch);
  *                   player_name: "Jugador 2"
  *                   player_number: "7"
  *                   goal_count: 3
- *       404:
- *         description: No se encontraron goleadores.
- *         content:
- *           application/json:
- *             example:
- *               message: "No se encontraron goleadores"
- *               data: null
  *       500:
  *         description: Error al consultar los goleadores.
  *         content:
@@ -160,18 +139,6 @@ router.get('/getTopScorers', goalController.getTopScorers);
  *                       goal_count:
  *                         type: integer
  *                         example: 15
- *       404:
- *         description: No se encontraron goleadores para este equipo
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: No se encontraron goleadores para este equipo
- *                 data:
- *                   type: null
  *       500:
  *         description: Error al consultar los goleadores por equipo
  *         content:
@@ -219,20 +186,6 @@ router.get('/getTopScorersByTeam/:team_id', goalController.getTopScorersByTeam);
  *                 - id: "UUID-del-gol2"
  *                   match_id: "UUID-del-partido"
  *                   player_id: "UUID-jugador2"
- *       400:
- *         description: Error de validación en los datos proporcionados
- *         content:
- *           application/json:
- *             example:
- *               message: El match_id y un array con al menos un player_id son requeridos
- *               data: null
- *       404:
- *         description: Partido no encontrado o jugadores no pertenecen a los equipos del partido
- *         content:
- *           application/json:
- *             example:
- *               message: Partido no encontrado
- *               data: null
  *       500:
  *         description: Error interno del servidor
  *         content:

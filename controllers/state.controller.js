@@ -24,7 +24,7 @@ module.exports = {
             const state = await State.findByPk(id);
 
             if (!state) {
-                return res.status(404).json({ message: 'State no encontrado', data: null });
+                return res.status(200).json({ message: 'State no encontrado', data: null });
             }
 
             // Responder con el registro encontrado
@@ -54,7 +54,7 @@ module.exports = {
 
             // Validar que `states` sea un array y no esté vacío
             if (!Array.isArray(states) || states.length === 0) {
-                return res.status(400).json({ data: null, message: 'El campo states debe ser un array y no estar vacío.' });
+                return res.status(200).json({ data: null, message: 'El campo states debe ser un array y no estar vacío.' });
             }
 
             // Crear múltiples registros de State

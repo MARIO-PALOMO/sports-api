@@ -39,8 +39,6 @@ router.get('/getAll', competitionController.getAllCompetitions);
  *     responses:
  *       200:
  *         description: Competencia obtenida exitosamente
- *       404:
- *         description: Competencia no encontrada
  *       500:
  *         description: Error en el servidor
  */
@@ -116,8 +114,6 @@ router.post('/addCompetition', competitionController.addCompetition);
  *     responses:
  *       200:
  *         description: Competencia actualizada exitosamente
- *       404:
- *         description: Competencia no encontrada
  *       500:
  *         description: Error en el servidor
  */
@@ -152,8 +148,6 @@ router.put('/:id/updateCompetitionDetails', competitionController.updateCompetit
  *     responses:
  *       200:
  *         description: Fechas actualizadas exitosamente
- *       404:
- *         description: Competencia no encontrada
  *       500:
  *         description: Error en el servidor
  */
@@ -185,8 +179,6 @@ router.put('/:id/updateCompetitionDates', competitionController.updateCompetitio
  *     responses:
  *       200:
  *         description: Logo actualizado exitosamente
- *       404:
- *         description: Competencia no encontrada
  *       500:
  *         description: Error en el servidor
  */
@@ -214,8 +206,6 @@ router.put('/:id/updateCompetitionLogos', competitionController.updateCompetitio
  *     responses:
  *       200:
  *         description: Competencia actualizada exitosamente
- *       404:
- *         description: Competencia no encontrada
  *       500:
  *         description: Error en el servidor
  */

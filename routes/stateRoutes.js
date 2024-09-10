@@ -85,8 +85,6 @@ router.get('/getAll', stateController.getAll);
  *                       format: uuid
  *                     name:
  *                       type: string
- *       404:
- *         description: State no encontrado
  *       500:
  *         description: Error al consultar states
  */

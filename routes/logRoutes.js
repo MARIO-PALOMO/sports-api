@@ -124,18 +124,6 @@ router.get('/getAll', logController.getAll);
  *                 message:
  *                   type: string
  *                   example: 'Success'
- *       400:
- *         description: Error en la solicitud debido a campos faltantes
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: null
- *                 message:
- *                   type: string
- *                   example: 'All fields are required'
  *       500:
  *         description: Error interno del servidor al agregar el registro de log
  *         content:

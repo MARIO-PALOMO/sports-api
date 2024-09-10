@@ -37,7 +37,7 @@ module.exports = {
         try {
             const player = await Player.findByPk(id);
             if (!player) {
-                return res.status(404).json({ data: null, message: 'Jugador no encontrado' });
+                return res.status(200).json({ data: null, message: 'Jugador no encontrado' });
             }
             return res.status(200).json({ message: 'Juagador encontrado', data: player });
         } catch (error) {
@@ -61,7 +61,7 @@ module.exports = {
             });
 
             if (!players.length) {
-                return res.status(404).json({ message: 'No se encontraron jugadores para este equipo', data: null });
+                return res.status(200).json({ message: 'No se encontraron jugadores para este equipo', data: null });
             }
 
             return res.status(200).json({ message: 'Jugadores encontrados', data: players });
@@ -78,7 +78,7 @@ module.exports = {
             // Buscar el ID del equipo por el nombre
             const team = await Team.findOne({ where: { name: team_name } });
             if (!team) {
-                return res.status(404).json({ data: null, error: 'Equipo no encontrado.' });
+                return res.status(200).json({ data: null, error: 'Equipo no encontrado.' });
             }
 
             const defaultPhoto = loadDefaultPhoto();
@@ -104,7 +104,7 @@ module.exports = {
                 url: req.originalUrl,
             };
             clog.addLocal('player.controller', 'addPlayer', `Error al consumir addPlayer: ${error}`, JSON.stringify(logData));
-            return res.status(400).json({ data: null, error: `Error al crear jugador: ${error}` });
+            return res.status(200).json({ data: null, error: `Error al crear jugador: ${error}` });
         }
     },
 
@@ -136,7 +136,7 @@ module.exports = {
                 if (!teamId) {
                     const errorMsg = `Equipo no encontrado: ${playerData.team_name}`;
                     clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg, JSON.stringify(playerData));
-                    return res.status(400).json({ data: null, error: errorMsg });
+                    return res.status(200).json({ data: null, error: errorMsg });
                 }
 
                 try {
@@ -157,7 +157,7 @@ module.exports = {
             if (!players.length) {
                 const errorMsg = 'No se pudo crear ningún jugador.';
                 clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg);
-                return res.status(400).json({ data: null, error: errorMsg });
+                return res.status(200).json({ data: null, error: errorMsg });
             }
 
             return res.status(200).json({ message: 'Jugadores creados exitosamente', data: players });
@@ -179,13 +179,13 @@ module.exports = {
         try {
             const player = await Player.findByPk(id);
             if (!player) {
-                return res.status(404).json({ data: null, error: 'Jugador no encontrado' });
+                return res.status(200).json({ data: null, error: 'Jugador no encontrado' });
             }
             await player.update(updates);
             return res.status(200).json({ message: 'Jugador actualizado exitosamente', data: player });
         } catch (error) {
             clog.addLocal('player.controller', 'updatePlayer', `Error al consumir updatePlayer: ${error}`, JSON.stringify(req));
-            return res.status(400).json({ data: null, error: `Error al actualizar jugador: ${error}` });
+            return res.status(200).json({ data: null, error: `Error al actualizar jugador: ${error}` });
         }
     },
 
@@ -196,14 +196,14 @@ module.exports = {
         try {
             const player = await Player.findByPk(id);
             if (!player) {
-                return res.status(404).json({ data: null, error: 'Jugador no encontrado' });
+                return res.status(200).json({ data: null, error: 'Jugador no encontrado' });
             }
             player.photo = photo;
             await player.save();
             return res.status(200).json({ message: 'Fotografía actualizada exitosamente', data: player });
         } catch (error) {
             clog.addLocal('player.controller', 'updatePlayerPhoto', `Error al consumir updatePlayerPhoto: ${error}`, JSON.stringify(req));
-            return res.status(400).json({ data: null, error: `Error al actualizar foto del jugador: ${error}` });
+            return res.status(200).json({ data: null, error: `Error al actualizar foto del jugador: ${error}` });
         }
     },
 
@@ -213,7 +213,7 @@ module.exports = {
         try {
             const player = await Player.findByPk(id);
             if (!player) {
-                return res.status(404).json({ data: null, error: 'Jugador no encontrado' });
+                return res.status(200).json({ data: null, error: 'Jugador no encontrado' });
             }
             await player.destroy();
             return res.status(200).json({ message: 'Jugador eliminado exitosamente', data: null });

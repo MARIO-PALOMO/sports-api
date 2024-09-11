@@ -20,7 +20,7 @@ module.exports = {
               {
                 model: Team,
                 as: 'team',
-                attributes: ['id', 'name'], // Incluir id y nombre del equipo
+                attributes: ['id', 'name', 'logo'], // Incluir id y nombre del equipo
               },
             ],
           },
@@ -38,6 +38,7 @@ module.exports = {
       const response = topScorers.map((scorer) => ({
         team_id: scorer.player.team.id,
         team_name: scorer.player.team.name,
+        team_logo: scorer.player.team.logo,
         player_id: scorer.player.id,
         player_name: scorer.player.name,
         player_number: scorer.player.player_number,

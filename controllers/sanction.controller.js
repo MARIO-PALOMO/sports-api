@@ -92,7 +92,7 @@ module.exports = {
                             {
                                 model: Team,
                                 as: 'team',
-                                attributes: ['id', 'name'],
+                                attributes: ['id', 'name', 'logo'],
                             }
                         ]
                     }
@@ -103,10 +103,11 @@ module.exports = {
             const sanctionsByPlayer = sanctions.reduce((acc, sanction) => {
                 const playerId = sanction.player.id;
                 const teamId = sanction.player.team.id;
+                const teamName = sanction.player.team.name;
+                const teamLogo = sanction.player.team.logo;
                 const matchId = sanction.match_id;
                 const playerName = sanction.player.name;
                 const playerNumber = sanction.player.player_number;
-                const teamName = sanction.player.team.name;
 
                 if (!acc[playerId]) {
                     acc[playerId] = {
@@ -115,6 +116,7 @@ module.exports = {
                         player_number: playerNumber,
                         team_id: teamId,
                         team_name: teamName,
+                        team_logo: teamLogo,
                         sanctions_count: 0,
                         match_ids: []
                     };

@@ -1,4 +1,5 @@
 const { Match, Competition, Round, Team, State, Schedule, Result, Field, sequelize } = require('../models');
+const moment = require('moment');
 const clog = require("./log.controller");
 
 module.exports = {
@@ -456,15 +457,11 @@ module.exports = {
 
             for (const matchData of matchesToUpdate) {
                 const { home_team_name, away_team_name, field_name, match_date, match_time } = matchData;
+                clog.addLocal('match.controller', 'updateMultipleMatches', 'datos', JSON.stringify(matchData));
 
                 // Validar que todos los parámetros están presentes
                 if (!home_team_name || !away_team_name || !field_name || !match_date || !match_time) {
                     return res.status(200).json({ message: 'Todos los parámetros son requeridos', data: matchData });
-                }
-
-                // Validar formato de fecha
-                if (isNaN(Date.parse(match_date))) {
-                    return res.status(200).json({ message: 'Formato de fecha inválido', data: matchData });
                 }
 
                 // Validar que los equipos existen y obtener sus IDs
@@ -497,10 +494,23 @@ module.exports = {
                 }
                 const field_id = field.id;
 
-                // Actualizar la tabla matches (match_date)
+                // Validar formato de fecha
+                if (isNaN(Date.parse(match_date))) {
+
+                }
+
+                // Validar y formatear la fecha y la hora utilizando moment.js
+                const formattedDateTime = moment(`${match_date}T${match_time}:00`).format('YYYY-MM-DDTHH:mm:ss');
+
+                // Validar si el formato de fecha es válido
+                if (!moment(formattedDateTime, 'YYYY-MM-DDTHH:mm:ss', true).isValid()) {
+                    return res.status(200).json({ message: 'Formato de fecha o tiempo inválido', data: matchData });
+                }
+
+                // Actualizar el partido con la fecha y hora formateadas
                 await Match.update(
-                    { match_date: `${match_date}T${match_time}:00` },
-                    { where: { id: match_id }, transaction, validate: false } // Desactivar las validaciones
+                    { match_date: formattedDateTime },
+                    { where: { id: match_id }, transaction, validate: false } // Desactivar validaciones
                 );
 
                 // Actualizar la tabla schedules (field_id y start_time)

@@ -517,9 +517,9 @@ module.exports = {
         } catch (error) {
             // Si hay algún error, revertir todas las actualizaciones
             await transaction.rollback();
-            clog.addLocal('match.controller', 'updateMultipleMatches', 'Error al actualizar partidos: ' + error, req.body.matches);
+            clog.addLocal('match.controller', 'updateMultipleMatches', 'Error al actualizar partidos: ' + error, "");
             console.error('Error al actualizar partidos:', error);
-            return res.status(500).json({ message: 'Error interno del servidor' + error.message, data: null });
+            return res.status(500).json({ message: 'Error interno del servidor: ' + error, data: null });
         }
     },
 

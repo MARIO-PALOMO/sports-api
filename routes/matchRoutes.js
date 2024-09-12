@@ -561,4 +561,65 @@ router.post('/addMatch', matchController.addMatch);
  */
 router.post('/addMultipleMatches', matchController.addMultipleMatches);
 
+/**
+ * @swagger
+ * /matches/updateMultipleMatches:
+ *   put:
+ *     summary: Actualiza varios partidos y horarios
+ *     description: Recibe un array de partidos y actualiza sus horarios y detalles. Si alguna actualización falla, se revierte todo el proceso.
+ *     tags: [Partidos]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             matches: 
+ *               - home_team_name: "Equipo A"
+ *                 away_team_name: "Equipo B"
+ *                 field_name: "Campo 1"
+ *                 match_date: "2024-09-12"
+ *                 match_time: "15:00"
+ *               - home_team_name: "Equipo C"
+ *                 away_team_name: "Equipo D"
+ *                 field_name: "Campo 2"
+ *                 match_date: "2024-09-13"
+ *                 match_time: "18:00"
+ *     responses:
+ *       200:
+ *         description: Actualización exitosa o error en los parámetros recibidos
+ *         content:
+ *           application/json:
+ *             examples:
+ *               success:
+ *                 value:
+ *                   message: "Los datos de los partidos y horarios han sido actualizados correctamente"
+ *               missing_parameters:
+ *                 value:
+ *                   message: "Todos los parámetros son requeridos"
+ *                   data:
+ *                     home_team_name: "Equipo A"
+ *                     away_team_name: "Equipo B"
+ *                     field_name: "Campo 1"
+ *                     match_date: "2024-09-12"
+ *                     match_time: "15:00"
+ *               invalid_date:
+ *                 value:
+ *                   message: "Formato de fecha inválido"
+ *                   data:
+ *                     match_date: "fecha_invalida"
+ *               team_not_found:
+ *                 value:
+ *                   message: "El equipo local Equipo A no existe"
+ *               field_not_found:
+ *                 value:
+ *                   message: "La cancha Campo 1 no existe"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Error interno del servidor"
+ */
+router.put('/updateMultipleMatches', matchController.updateMultipleMatches);
+
 module.exports = router;

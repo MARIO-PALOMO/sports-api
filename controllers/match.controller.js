@@ -442,4 +442,84 @@ module.exports = {
             res.status(500).json({ message: 'Error al crear partidos', data: error.message });
         }
     },
+
+    // Método para actualizar varios partidos y horarios
+    async updateMultipleMatches(req, res) {
+        const transaction = await sequelize.transaction(); // Iniciar una transacción
+
+        try {
+            const matchesToUpdate = req.body.matches; // Array de partidos
+
+            if (!matchesToUpdate || !Array.isArray(matchesToUpdate) || matchesToUpdate.length === 0) {
+                return res.status(200).json({ message: 'Debe proporcionar un array de partidos a actualizar', data: null });
+            }
+
+            for (const matchData of matchesToUpdate) {
+                const { home_team_name, away_team_name, field_name, match_date, match_time } = matchData;
+
+                // Validar que todos los parámetros están presentes
+                if (!home_team_name || !away_team_name || !field_name || !match_date || !match_time) {
+                    return res.status(200).json({ message: 'Todos los parámetros son requeridos', data: matchData });
+                }
+
+                // Validar formato de fecha
+                if (isNaN(Date.parse(match_date))) {
+                    return res.status(200).json({ message: 'Formato de fecha inválido', data: matchData });
+                }
+
+                // Validar que los equipos existen y obtener sus IDs
+                const homeTeam = await Team.findOne({ where: { name: home_team_name } }, { transaction });
+                const awayTeam = await Team.findOne({ where: { name: away_team_name } }, { transaction });
+
+                if (!homeTeam) {
+                    return res.status(200).json({ message: `El equipo local ${home_team_name} no existe`, data: matchData });
+                }
+                if (!awayTeam) {
+                    return res.status(200).json({ message: `El equipo visitante ${away_team_name} no existe`, data: matchData });
+                }
+
+                const home_team_id = homeTeam.id;
+                const away_team_id = awayTeam.id;
+
+                // Obtener el partido donde coincidan los equipos local y visitante
+                const match = await Match.findOne({ where: { home_team_id, away_team_id } }, { transaction });
+
+                if (!match) {
+                    return res.status(200).json({ message: 'No se encontró el partido con los equipos proporcionados', data: matchData });
+                }
+
+                const match_id = match.id;
+
+                // Validar que la cancha existe y obtener su ID
+                const field = await Field.findOne({ where: { name: field_name } }, { transaction });
+                if (!field) {
+                    return res.status(200).json({ message: `La cancha ${field_name} no existe`, data: matchData });
+                }
+                const field_id = field.id;
+
+                // Actualizar la tabla matches (match_date)
+                await Match.update(
+                    { match_date: `${match_date}T${match_time}:00` },
+                    { where: { id: match_id }, transaction, validate: false } // Desactivar las validaciones
+                );
+
+                // Actualizar la tabla schedules (field_id y start_time)
+                await Schedule.update(
+                    { field_id, start_time: match_time },
+                    { where: { match_id }, transaction }
+                );
+            }
+
+            // Si todas las actualizaciones fueron exitosas, confirmar la transacción
+            await transaction.commit();
+            return res.status(200).json({ message: 'Los datos de los partidos y horarios han sido actualizados correctamente', data: null });
+
+        } catch (error) {
+            // Si hay algún error, revertir todas las actualizaciones
+            await transaction.rollback();
+            console.error('Error al actualizar partidos:', error);
+            return res.status(500).json({ message: 'Error interno del servidor' + error.message, data: null });
+        }
+    },
+
 };

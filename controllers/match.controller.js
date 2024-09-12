@@ -1,5 +1,4 @@
 const { Match, Competition, Round, Team, State, Schedule, Result, Field, sequelize } = require('../models');
-const moment = require('moment');
 const clog = require("./log.controller");
 
 module.exports = {
@@ -447,7 +446,6 @@ module.exports = {
     // Método para actualizar varios partidos y horarios
     async updateMultipleMatches(req, res) {
         const transaction = await sequelize.transaction(); // Iniciar una transacción
-
         try {
             const matchesToUpdate = req.body.matches; // Array de partidos
 
@@ -494,28 +492,37 @@ module.exports = {
                 }
                 const field_id = field.id;
 
-                // Validar formato de fecha
-                if (isNaN(Date.parse(match_date))) {
+                // Validar y formatear la hora, agregar 0 a la izquierda si es necesario
+                const formattedMatchTime = match_time.padStart(5, '0'); // Asegura que el formato sea HH:mm
 
-                }
+                // Concatenar la fecha y la hora en formato ISO
+                const formattedDateTime = `${match_date}T${formattedMatchTime}:00`;
 
-                // Validar y formatear la fecha y la hora utilizando moment.js
-                const formattedDateTime = moment(`${match_date}T${match_time}:00`).format('YYYY-MM-DDTHH:mm:ss');
-
-                // Validar si el formato de fecha es válido
-                if (!moment(formattedDateTime, 'YYYY-MM-DDTHH:mm:ss', true).isValid()) {
+                // Validar si el formato de fecha es válido usando el constructor Date
+                const dateTime = new Date(formattedDateTime);
+                if (isNaN(dateTime.getTime())) {
                     return res.status(200).json({ message: 'Formato de fecha o tiempo inválido', data: matchData });
                 }
 
-                // Actualizar el partido con la fecha y hora formateadas
+                // Convertir la fecha y hora a UTC utilizando los métodos nativos de JS
+                const utcDateTime = new Date(Date.UTC(
+                    dateTime.getUTCFullYear(),
+                    dateTime.getUTCMonth(),
+                    dateTime.getUTCDate(),
+                    dateTime.getUTCHours(),
+                    dateTime.getUTCMinutes(),
+                    dateTime.getUTCSeconds()
+                ));
+
+                // Actualizar el partido con la fecha y hora en UTC
                 await Match.update(
-                    { match_date: formattedDateTime },
-                    { where: { id: match_id }, transaction, validate: false } // Desactivar validaciones
+                    { match_date: utcDateTime.toISOString() }, // Convertir a cadena UTC en formato ISO
+                    { where: { id: match_id }, transaction, validate: false }
                 );
 
                 // Actualizar la tabla schedules (field_id y start_time)
                 await Schedule.update(
-                    { field_id, start_time: match_time },
+                    { field_id, start_time: formattedMatchTime },
                     { where: { match_id }, transaction }
                 );
             }
@@ -527,10 +534,9 @@ module.exports = {
         } catch (error) {
             // Si hay algún error, revertir todas las actualizaciones
             await transaction.rollback();
-            clog.addLocal('match.controller', 'updateMultipleMatches', 'Error al actualizar partidos: ' + error, "");
+            clog.addLocal('match.controller', 'updateMultipleMatches', 'Error al actualizar partidos: ' + error.message, JSON.stringify(error));
             console.error('Error al actualizar partidos:', error);
             return res.status(500).json({ message: 'Error interno del servidor: ' + error, data: null });
         }
     },
-
 };

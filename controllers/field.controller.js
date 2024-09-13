@@ -1,5 +1,5 @@
 const { Field } = require('../models'); // Importa el modelo Field
-const clog = require("./log.controller");
+const logController = require("./log.controller");
 
 module.exports = {
 
@@ -10,8 +10,9 @@ module.exports = {
             const fields = await Field.findAll();
             return res.status(200).json({ message: 'Canchas deportivas encontradas', data: fields });
         } catch (error) {
-            clog.addLocal("field.controller", "getAll", 'Error al consultar las canchas deportivas: ' + error, JSON.stringify(req));
-            return res.status(500).json({ data: null, message: 'Error al consultar las canchas deportivas: ' + error });
+            console.error('Error al consumir getAll: ', error);
+            logController.addLocal('field.controller', 'getAll', 'Error al obtener las chancas deportivas: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener las chancas deportivas, ' + error.message });
         }
     },
 
@@ -30,8 +31,9 @@ module.exports = {
             // Responder con el registro encontrado
             return res.status(200).json({ message: 'Cancha Deportiva encontrada', data: field });
         } catch (error) {
-            clog.addLocal("field.controller", "getFieldById", 'Error al consultar cancha deportivas: ' + error, JSON.stringify(req));
-            return res.status(500).json({ data: null, message: 'Error al consultar cancha deportivas: ' + error });
+            console.error('Error al consumir getFieldById: ', error);
+            logController.addLocal('field.controller', 'getFieldById', 'Error al obtener la cancha deportiva por id: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener la cancha deportiva por id, ' + error.message });
         }
     },
 
@@ -41,8 +43,9 @@ module.exports = {
             const field = await Field.create(req.body);
             return res.status(200).json({ message: 'Cancha deportiva creada con éxito', data: field });
         } catch (error) {
-            clog.addLocal("field.controller", "addField", 'Add field error: ' + error, JSON.stringify(req.body));
-            return res.status(500).json({ data: null, message: 'Error al crear cancha deportiva: ' + error });
+            console.error('Error al consumir addField: ', error);
+            logController.addLocal('field.controller', 'addField', 'Error al agregar cancha deportiva: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al agregar cancha deportiva, ' + error.message });
         }
     },
 
@@ -60,8 +63,9 @@ module.exports = {
             const newFields = await Field.bulkCreate(fields);
             return res.status(200).json({ message: 'Canchas deportivas creadas con éxito', data: newFields });
         } catch (error) {
-            clog.addLocal("field.controller", "addMultipleFields", 'Add multiple fields error: ' + error, JSON.stringify(req.body));
-            return res.status(500).json({ data: null, message: 'Error al agregar múltiples canchas deportivas: ' + error });
+            console.error('Error al consumir addMultipleFields: ', error);
+            logController.addLocal('field.controller', 'addMultipleFields', 'Error al agregar múltiples canchas deportivas: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al agregar múltiples canchas deportivas, ' + error.message });
         }
     },
 };

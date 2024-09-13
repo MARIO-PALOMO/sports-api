@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Player, Team } = require('../models');
-const clog = require('./log.controller');
+const logController = require('./log.controller');
 const { Sequelize } = require('sequelize');
 
 // Ruta de la foto predeterminada
@@ -13,8 +13,7 @@ const loadDefaultPhoto = () => {
         return fs.readFileSync(defaultPhotoPath, { encoding: 'base64' });
     } catch (error) {
         console.error(`Error al cargar la foto predeterminada: ${error}`);
-        // Devolver un valor por defecto en caso de error, como una cadena vacía o un placeholder base64
-        return null; // o podrías devolver una imagen en base64 por defecto
+        return null;
     }
 };
 
@@ -26,8 +25,9 @@ module.exports = {
             const players = await Player.findAll();
             return res.status(200).json({ message: 'Lista de jugadores encontrados', data: players });
         } catch (error) {
-            clog.addLocal('player.controller', 'getAllPlayers', `Error al consultar getAllPlayers: ${error}`, JSON.stringify(req));
-            return res.status(500).json({ data: null, error: `Error al consultar jugadores: ${error}` });
+            console.error('Error al consumir getAllPlayers: ', error);
+            logController.addLocal('player.controller', 'getAllPlayers', 'Error al obtener el listado de jugadores: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de jugadores, ' + error.message });
         }
     },
 
@@ -41,8 +41,9 @@ module.exports = {
             }
             return res.status(200).json({ message: 'Juagador encontrado', data: player });
         } catch (error) {
-            clog.addLocal('player.controller', 'getPlayerById', `Error al consultar getPlayerById: ${error}`, JSON.stringify(req));
-            return res.status(500).json({ data: null, error: `Error al consultar jugador: ${error}` });
+            console.error('Error al consumir getPlayerById: ', error);
+            logController.addLocal('player.controller', 'getPlayerById', 'Error al obtener un jugadores por id: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener un jugador por id, ' + error.message });
         }
     },
 
@@ -66,8 +67,9 @@ module.exports = {
 
             return res.status(200).json({ message: 'Jugadores encontrados', data: players });
         } catch (error) {
-            clog.addLocal('player.controller', 'getAllPlayersByTeamId', `Error al consultar getAllPlayersByTeamId: ${error}`, JSON.stringify(req));
-            return res.status(500).json({ data: null, error: `Error al consultar jugadores por equipo: ${error}` });
+            console.error('Error al consumir getAllPlayersByTeamId: ', error);
+            logController.addLocal('player.controller', 'getAllPlayersByTeamId', 'Error al obtener el listado de jugadores por team_id: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de jugadores por team_id, ' + error.message });
         }
     },
 
@@ -97,28 +99,20 @@ module.exports = {
 
             return res.status(200).json({ message: 'Jugador creado exitosamente', data: player });
         } catch (error) {
-            // Loguear solo partes relevantes del req para evitar el error de referencia circular
-            const logData = {
-                method: req.method,
-                body: req.body,
-                url: req.originalUrl,
-            };
-            clog.addLocal('player.controller', 'addPlayer', `Error al consumir addPlayer: ${error}`, JSON.stringify(logData));
-            return res.status(200).json({ data: null, error: `Error al crear jugador: ${error}` });
+            console.error('Error al consumir addPlayer: ', error);
+            logController.addLocal('player.controller', 'addPlayer', 'Error al agregar jugador: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al agregar jugador, ' + error.message });
         }
     },
 
     // Creación de varios jugadores a la vez
     async addMultiplePlayers(req, res) {
         const { body: playersData } = req;
-
         try {
             // Cargar la foto predeterminada una sola vez
             const defaultPhoto = loadDefaultPhoto();
             if (!defaultPhoto) {
-                const errorMsg = 'Error al cargar la foto predeterminada.';
-                clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg);
-                return res.status(500).json({ data: null, error: errorMsg });
+                return res.status(500).json({ data: null, message: 'Error al cargar la foto predeterminada.' });
             }
 
             // Obtener los IDs de los equipos en una sola consulta
@@ -134,9 +128,7 @@ module.exports = {
             for (const playerData of playersData) {
                 const teamId = teamsMap[playerData.team_name];
                 if (!teamId) {
-                    const errorMsg = `Equipo no encontrado: ${playerData.team_name}`;
-                    clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg, JSON.stringify(playerData));
-                    return res.status(200).json({ data: null, error: errorMsg });
+                    return res.status(200).json({ data: null, mesaage: 'Equipo no encontrado ' + playerData.team_name });
                 }
 
                 try {
@@ -148,27 +140,19 @@ module.exports = {
 
                     players.push(player);
                 } catch (playerError) {
-                    const errorMsg = `Error al crear jugador: ${playerError.message}`;
-                    clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg, JSON.stringify(playerData));
-                    return res.status(500).json({ data: null, error: errorMsg });
+                    return res.status(500).json({ data: null, message: 'Error al crear jugador, ' + playerError.message });
                 }
             }
 
             if (!players.length) {
-                const errorMsg = 'No se pudo crear ningún jugador.';
-                clog.addLocal('player.controller', 'addMultiplePlayers', errorMsg);
-                return res.status(200).json({ data: null, error: errorMsg });
+                return res.status(200).json({ data: null, error: 'No se pudo crear ningún jugador.' });
             }
 
             return res.status(200).json({ message: 'Jugadores creados exitosamente', data: players });
         } catch (error) {
-            const logData = {
-                method: req.method,
-                body: playersData,
-                url: req.originalUrl,
-            };
-            clog.addLocal('player.controller', 'addMultiplePlayers', `Error al consumir addMultiplePlayers: ${error.message}`, JSON.stringify(logData));
-            return res.status(500).json({ data: null, error: `Error al crear jugadores: ${error.message}` });
+            console.error('Error al consumir addMultiplePlayers: ', error);
+            logController.addLocal('player.controller', 'addMultiplePlayers', 'Error al agregar múltiples jugadores: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al agregar múltiples jugadores, ' + error.message });
         }
     },
 
@@ -184,8 +168,9 @@ module.exports = {
             await player.update(updates);
             return res.status(200).json({ message: 'Jugador actualizado exitosamente', data: player });
         } catch (error) {
-            clog.addLocal('player.controller', 'updatePlayer', `Error al consumir updatePlayer: ${error}`, JSON.stringify(req));
-            return res.status(200).json({ data: null, error: `Error al actualizar jugador: ${error}` });
+            console.error('Error al consumir updatePlayer: ', error);
+            logController.addLocal('player.controller', 'updatePlayer', 'Error al actualizar los datos de un jugador: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al actualizar los datos de un jugador, ' + error.message });
         }
     },
 
@@ -202,8 +187,9 @@ module.exports = {
             await player.save();
             return res.status(200).json({ message: 'Fotografía actualizada exitosamente', data: player });
         } catch (error) {
-            clog.addLocal('player.controller', 'updatePlayerPhoto', `Error al consumir updatePlayerPhoto: ${error}`, JSON.stringify(req));
-            return res.status(200).json({ data: null, error: `Error al actualizar foto del jugador: ${error}` });
+            console.error('Error al consumir updatePlayerPhoto: ', error);
+            logController.addLocal('player.controller', 'updatePlayerPhoto', 'Error al actualizar la fotografía de un jugador: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al actualizar la fotografía de un jugador, ' + error.message });
         }
     },
 
@@ -218,8 +204,9 @@ module.exports = {
             await player.destroy();
             return res.status(200).json({ message: 'Jugador eliminado exitosamente', data: null });
         } catch (error) {
-            clog.addLocal('player.controller', 'deletePlayer', `Error al consumir deletePlayer: ${error}`, JSON.stringify(req));
-            return res.status(500).json({ data: null, error: `Error al eliminar jugador: ${error}` });
+            console.error('Error al consumir deletePlayer: ', error);
+            logController.addLocal('player.controller', 'deletePlayer', 'Error al eliminar un jugador: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al eliminar un jugador, ' + error.message });
         }
     },
 
@@ -236,8 +223,9 @@ module.exports = {
             });
             return res.status(200).json({ message: 'Jugadores eliminados exitosamente', data: null });
         } catch (error) {
-            clog.addLocal('player.controller', 'deleteMultiplePlayers', `Error al consumir deleteMultiplePlayers: ${error}`, JSON.stringify(req));
-            return res.status(500).json({ error: `Error al eliminar jugadores: ${error}` });
+            console.error('Error al consumir deleteMultiplePlayers: ', error);
+            logController.addLocal('player.controller', 'deleteMultiplePlayers', 'Error al eliminar múltiples jugadores: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al eliminar múltiples jugadores, ' + error.message });
         }
     },
 };

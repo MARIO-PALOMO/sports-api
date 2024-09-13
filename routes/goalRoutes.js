@@ -46,6 +46,44 @@ const goalController = require('../controllers/goal.controller');
  */
 router.get('/getTopScorers', goalController.getTopScorers);
 
+
+/**
+ * @swagger
+ * /goals/getTopFiveScorers:
+ *   get:
+ *     summary: Obtiene el top 5 de goleadores de toda la competición
+ *     description: Retorna un listado de los jugadores que han anotado goles, incluyendo la información del equipo y la cantidad de goles anotados por cada jugador.
+ *     tags: [Gestión de Goles]
+ *     responses:
+ *       200:
+ *         description: Listado de goleadores encontrado exitosamente.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Goleadores encontrados"
+ *               data:
+ *                 - team_id: "e7c97f5a-9cb9-4a63-8f6d-5c96c867fc7d"
+ *                   team_name: "Equipo A"
+ *                   player_id: "7b5b7b7a-2c3d-4d5c-b7d3-7c3e3d7d3e3d"
+ *                   player_name: "Jugador 1"
+ *                   player_number: "10"
+ *                   goal_count: 5
+ *                 - team_id: "f8a97f6b-7db9-4b73-9f7e-6d86f867dc7d"
+ *                   team_name: "Equipo B"
+ *                   player_id: "8d6d7c8a-3c4e-4d6f-b8e4-8c4f4d8e4c4f"
+ *                   player_name: "Jugador 2"
+ *                   player_number: "7"
+ *                   goal_count: 3
+ *       500:
+ *         description: Error al consultar los goleadores.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Error al consultar los goleadores"
+ *               data: "Detalles del error"
+ */
+router.get('/getTopFiveScorers', goalController.getTopFiveScorers);
+
 /**
  * @swagger
  * /goals/getGoalsByMatch/{match_id}:

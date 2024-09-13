@@ -75,7 +75,23 @@ module.exports = (sequelize) => {
     logo_2: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    logo_3: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     }, 
+    logo_4: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    }, 
+    logo_5: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    }, 
+    logo_6: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },  
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

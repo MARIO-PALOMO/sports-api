@@ -1,57 +1,61 @@
 const { mlog } = require("../models");
 const { v4: uuidv4 } = require("uuid");
 
-exports.getAll = async (req, res, next) => {
+exports.getAll = async (req, res) => {
     try {
         const logs = await mlog.findAll();
-        return res.status(200).json({ data: logs, message: 'Success' });
+        console.log('All logs retrieved successfully.');
+        return res.status(200).json({ data: logs, message: 'Logs retrieved successfully.' });
     } catch (error) {
-        console.log('Error', error);
-        return res.status(500).json({ data: null, message: 'Get all logs error: ' + error });
+        console.error('Error retrieving logs:', error);
+        return res.status(500).json({ data: null, message: 'Error retrieving logs. Please try again.' });
     }
 };
 
-exports.add = async (req, res, next) => {
+exports.add = async (req, res) => {
     try {
+        const { entity, method, error, payload } = req.body;
 
-        const entity = req.body?.entity;
-        const method = req.body?.method;
-        const error = req.body?.error;
-        const payload = req.body?.payload;
-
-        if (!entity || !method || !error || !error || !payload) {
-            return res.status(200).json({ data: null, message: 'All fields are required' });
+        // Verificar que todos los campos requeridos están presentes
+        if (!entity || !method || !error || !payload) {
+            return res.status(200).json({ data: null, message: 'All fields (entity, method, error, payload) are required.' });
         }
-        const add = await mlog.create({
+
+        const logEntry = await mlog.create({
             id: uuidv4(),
             entity,
             method,
             error,
-            payload
+            payload,
         });
 
-        return res.status(200).json({ data: add, message: 'Success' });
-    } catch (error) {
-        console.log('Error', error);
-        return res.status(500).json({ data: null, message: 'Add logs error: ' + error });
+        console.log(`Log added successfully for entity: ${entity}, method: ${method}`);
+        return res.status(200).json({ data: logEntry, message: 'Log added successfully.' });
+
+    } catch (err) {
+        console.error('Error adding log:', err);
+        return res.status(500).json({ data: null, message: 'Error adding log. Please try again.' });
     }
 };
 
 exports.addLocal = async (entity, method, error, payload) => {
     try {
-
-        if (!entity || !method || !error || !error || !payload) {
-            return res.status(200).json({ data: null, message: 'All fields are required' });
+        // Verificar que todos los campos requeridos están presentes
+        if (!entity || !method || !error || !payload) {
+            console.error('All fields (entity, method, error, payload) are required.');
+            return;
         }
-        const add = await mlog.create({
+
+        const logEntry = await mlog.create({
             id: uuidv4(),
             entity,
             method,
             error,
-            payload
+            payload,
         });
 
-    } catch (error) {
-        console.log('Error', error);
+        console.log(`Local log added successfully for entity: ${entity}, method: ${method}`);
+    } catch (err) {
+        console.error('Error adding local log:', err);
     }
 };

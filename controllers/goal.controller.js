@@ -1,5 +1,5 @@
 const { Goal, Match, Player, Team, sequelize } = require('../models'); // Asegúrate de que la ruta es correcta
-const clog = require("./log.controller");
+const logController = require("./log.controller");
 
 module.exports = {
 
@@ -48,63 +48,63 @@ module.exports = {
       // Respuesta con los goleadores encontrados
       res.status(200).json({ message: 'Goleadores encontrados', data: response });
     } catch (error) {
-      console.log(error);
-      clog.addLocal(
-        'goal.controller',
-        'getTopScorers',
-        'Error al consultar los goleadores: ' + error.message,
-        'Error al consultar los goleadores'
-      );
-      res.status(500).json({ message: 'Error al consultar los goleadores', data: error.message });
+      console.error('Error al consumir getTopScorers: ', error);
+      logController.addLocal('goal.controller', 'getTopScorers', 'Error al obtener el listado de goleadores: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+      return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de goleadores, ' + error.message });
     }
   },
 
-  /*async getGoalsByMatch(req, res) {
+  async getTopFiveScorers(req, res) {
     try {
-      const { match_id } = req.params; // Obtener el ID del partido desde los parámetros de la solicitud
-
-      // Validar que el match_id no esté vacío
-      if (!match_id) {
-        return res.status(200).json({ message: 'El match_id es requerido', data: null });
-      }
-
-      // Buscar todos los goles relacionados con el partido
-      const goals = await Goal.findAll({
-        where: { match_id },
+      // Obtener todos los goles agrupados por jugador y contar la cantidad de goles
+      const topScorers = await Goal.findAll({
+        attributes: [
+          'player_id',
+          [sequelize.fn('COUNT', sequelize.col('player_id')), 'goalCount'], // Contar la cantidad de goles por jugador
+        ],
         include: [
-          {
-            model: Match,
-            as: 'match',
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
-          },
           {
             model: Player,
             as: 'player',
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            attributes: ['id', 'name', 'player_number', 'team_id'], // Incluir id, nombre, número del jugador y team_id
+            include: [
+              {
+                model: Team,
+                as: 'team',
+                attributes: ['id', 'name', 'logo'], // Incluir id y nombre del equipo
+              },
+            ],
           },
         ],
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        order: [['createdAt', 'ASC']],
+        group: ['player_id', 'player.id', 'player.team_id', 'player.team.id'], // Agrupar por jugador y equipo
+        order: [[sequelize.literal('"goalCount"'), 'DESC']], // Ordenar por cantidad de goles usando comillas dobles para el alias
+        limit: 5, // Limitar a 5 registros
       });
-
-      // Verificar si se encontraron goles
-      if (goals.length === 0) {
-        return res.status(200).json({ message: 'No se encontraron goles para este partido', data: null });
+  
+      // Verificar si se encontraron goleadores
+      if (topScorers.length === 0) {
+        return res.status(200).json({ message: 'No se encontraron goleadores', data: null });
       }
-
-      // Respuesta con los goles encontrados
-      res.status(200).json({ message: 'Goles encontrados', data: goals });
+  
+      // Formatear la respuesta para incluir solo la información solicitada
+      const response = topScorers.map((scorer) => ({
+        team_id: scorer.player.team.id,
+        team_name: scorer.player.team.name,
+        team_logo: scorer.player.team.logo,
+        player_id: scorer.player.id,
+        player_name: scorer.player.name,
+        player_number: scorer.player.player_number,
+        goal_count: scorer.getDataValue('goalCount'), // Obtener la cantidad de goles calculada
+      }));
+  
+      // Respuesta con los goleadores encontrados
+      res.status(200).json({ message: 'Goleadores encontrados', data: response });
     } catch (error) {
-      // Manejo de errores y logging
-      clog.addLocal(
-        'goal.controller',
-        'getGoalsByMatch',
-        'Error al consultar los goles del partido: ' + error.message,
-        'Error al consultar los goles del partido'
-      );
-      res.status(500).json({ message: 'Error al consultar los goles del partido', data: error.message });
+      console.error('Error al consumir getTopFiveScorers: ', error);
+      logController.addLocal('goal.controller', 'getTopFiveScorers', 'Error al obtener el listado de los 5 mayores goleadores: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+      return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de los 5 mayores goleadores, ' + error.message });
     }
-  }, */
+  },
 
   async getGoalsByMatch(req, res) {
     try {
@@ -155,14 +155,9 @@ module.exports = {
       // Respuesta con los goles encontrados
       res.status(200).json({ message: 'Goles encontrados para el partido', data: response });
     } catch (error) {
-      console.log(error);
-      clog.addLocal(
-        'goal.controller',
-        'getGoalsByMatch',
-        'Error al consultar los goles por partido: ' + error.message,
-        'Error al consultar los goles por partido'
-      );
-      res.status(500).json({ message: 'Error al consultar los goles por partido', data: error.message });
+      console.error('Error al consumir getGoalsByMatch: ', error);
+      logController.addLocal('goal.controller', 'getGoalsByMatch', 'Error al obtener el listado de goleadores por partido: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+      return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de goleadores por partido, ' + error.message });
     }
   },  
   
@@ -213,14 +208,9 @@ module.exports = {
       // Respuesta con los goleadores encontrados
       res.status(200).json({ message: 'Goleadores encontrados para el equipo', data: response });
     } catch (error) {
-      console.log(error);
-      clog.addLocal(
-        'goal.controller',
-        'getTopScorersByTeam',
-        'Error al consultar los goleadores por equipo: ' + error.message,
-        'Error al consultar los goleadores por equipo'
-      );
-      res.status(500).json({ message: 'Error al consultar los goleadores por equipo', data: error.message });
+      console.error('Error al consumir getTopScorersByTeam: ', error);
+      logController.addLocal('goal.controller', 'getTopScorersByTeam', 'Error al obtener el listado de goleadores por equipo: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+      return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de goleadores por equipo, ' + error.message });
     }
   },
 
@@ -270,13 +260,9 @@ module.exports = {
 
       res.status(200).json({ message: 'Goles agregados exitosamente', data: createdGoals });
     } catch (error) {
-      clog.addLocal(
-        'goal.controller',
-        'addGoals',
-        'Error al agregar los goles: ' + error,
-        'Error al agregar los goles'
-      );
-      res.status(500).json({ message: 'Error al agregar los goles', data: error.message });
+      console.error('Error al consumir addGoals: ', error);
+      logController.addLocal('goal.controller', 'addGoals', 'Error al agregar goles: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+      return res.status(500).json({ data: null, message: 'Ocurrió un error al agregar goles, ' + error.message });
     }
   },
 };

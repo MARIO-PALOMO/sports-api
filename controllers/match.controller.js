@@ -1,5 +1,5 @@
 const { Match, Competition, Round, Team, State, Schedule, Result, Field, sequelize } = require('../models');
-const clog = require("./log.controller");
+const logController = require("./log.controller");
 
 module.exports = {
     // Obtener el listado de todos los partidos
@@ -56,17 +56,12 @@ module.exports = {
 
             res.json({ message: 'Listado de todos los partidos', data: matches });
         } catch (error) {
-            clog.addLocal(
-                'match.controller',
-                'getAllMatches',
-                'Error al consultar todos los partidos: ' + error,
-                'Error al consultar todos los partidos'
-            );
-            res.status(500).json({ message: 'Error al consultar todos los partidos', data: error.message });
+            console.error('Error al consumir getAllMatches: ', error);
+            logController.addLocal('match.controller', 'getAllMatches', 'Error al obtener el listado de los partidos: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de los partidos, ' + error.message });
         }
     },
 
-    // Obtener el listado de todos los partidos por round_id
     // Obtener el listado de partidos por código de ronda
     async getMatchesByRound(req, res) {
         try {
@@ -132,13 +127,9 @@ module.exports = {
 
             res.json({ message: 'Listado de partidos de la ronda', data: matches });
         } catch (error) {
-            clog.addLocal(
-                'match.controller',
-                'getMatchesByRound',
-                'Error al consultar los partidos de la ronda: ' + error,
-                'Error al consultar los partidos de la ronda'
-            );
-            res.status(500).json({ message: 'Error al consultar los partidos de la ronda', data: error.message });
+            console.error('Error al consumir getMatchesByRound: ', error);
+            logController.addLocal('match.controller', 'getMatchesByRound', 'Error al obtener el listado de los partidos filtrados por código de ronda: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener el listado de los partidos filtrados por código de ronda, ' + error.message });
         }
     },
 
@@ -204,13 +195,9 @@ module.exports = {
 
             res.json({ message: 'Partido encontrado', data: match });
         } catch (error) {
-            clog.addLocal(
-                'match.controller',
-                'getMatchById',
-                'Error al consultar el partido por ID: ' + error,
-                'Error al consultar el partido por ID'
-            );
-            res.status(500).json({ message: 'Error al consultar el partido por ID', data: error.message });
+            console.error('Error al consumir getMatchById: ', error);
+            logController.addLocal('match.controller', 'getMatchById', 'Error al obtener un partido por id: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener un partido por id, ' + error.message });
         }
     },
 
@@ -303,17 +290,9 @@ module.exports = {
         } catch (error) {
             // Revertir todas las operaciones realizadas dentro de la transacción en caso de error
             await transaction.rollback();
-
-            // Registrar el error
-            clog.addLocal(
-                'match.controller',
-                'addMatch',
-                'Error al crear partido: ' + error.message,
-                'Error al crear partido'
-            );
-
-            // Enviar la respuesta de error al cliente
-            res.status(500).json({ message: 'Error al crear partido', data: error.message });
+            console.error('Error al consumir addMatch: ', error);
+            logController.addLocal('match.controller', 'addMatch', 'Error al crear un partido: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al crear un partido, ' + error.message });
         }
     },
 
@@ -429,17 +408,9 @@ module.exports = {
         } catch (error) {
             // Revertir todas las operaciones realizadas dentro de la transacción en caso de error
             await transaction.rollback();
-
-            // Registrar el error
-            clog.addLocal(
-                'match.controller',
-                'addMultipleMatches',
-                'Error al crear partidos: ' + error.message,
-                'Error al crear partidos'
-            );
-
-            // Enviar la respuesta de error al cliente
-            res.status(500).json({ message: 'Error al crear partidos', data: error.message });
+            console.error('Error al consumir addMultipleMatches: ', error);
+            logController.addLocal('match.controller', 'addMultipleMatches', 'Error al crear múltiples partidos: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al crear múltiples partidos, ' + error.message });
         }
     },
 
@@ -455,7 +426,6 @@ module.exports = {
 
             for (const matchData of matchesToUpdate) {
                 const { home_team_name, away_team_name, field_name, match_date, match_time } = matchData;
-                clog.addLocal('match.controller', 'updateMultipleMatches', 'datos', JSON.stringify(matchData));
 
                 // Validar que todos los parámetros están presentes
                 if (!home_team_name || !away_team_name || !field_name || !match_date || !match_time) {
@@ -534,9 +504,9 @@ module.exports = {
         } catch (error) {
             // Si hay algún error, revertir todas las actualizaciones
             await transaction.rollback();
-            clog.addLocal('match.controller', 'updateMultipleMatches', 'Error al actualizar partidos: ' + error.message, JSON.stringify(error));
-            console.error('Error al actualizar partidos:', error);
-            return res.status(500).json({ message: 'Error interno del servidor: ' + error, data: null });
+            console.error('Error al consumir updateMultipleMatches: ', error);
+            logController.addLocal('match.controller', 'updateMultipleMatches', 'Error al actualizar la información de múltiples partidos: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al actualizar la información de múltiples partidos, ' + error.message });
         }
     },
 };

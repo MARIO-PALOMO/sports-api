@@ -89,7 +89,7 @@ router.get('/getSanctionsByMatch/:match_id', sanctionController.getSanctionsByMa
  *   get:
  *     summary: Obtiene sanciones agrupadas por jugador según el tipo de sanción.
  *     description: Este endpoint devuelve un listado de sanciones agrupadas por jugador para un tipo específico de sanción, incluyendo detalles del jugador y del equipo.
- *     tags:  [Sanciones]
+ *     tags: [Sanciones]
  *     parameters:
  *       - in: path
  *         name: sanction_type_id
@@ -125,6 +125,49 @@ router.get('/getSanctionsByMatch/:match_id', sanctionController.getSanctionsByMa
  *               message: "Ocurrió un error al obtener las sanciones. Por favor, inténtelo nuevamente."
  */
 router.get('/getSanctionsByType/:sanction_type_id', sanctionController.getSanctionsByType);
+
+/**
+ * @swagger
+ * /sanctions/getTopFiveSanctionsByType/{sanction_type_id}:
+ *   get:
+ *     summary: Obtiene los cinco jugadores con más sanciones por tipo de sanción
+ *     description: Retorna los cinco jugadores con más sanciones, agrupados por jugador, para un tipo de sanción específico. El resultado incluye el ID del jugador, nombre, número, equipo, cantidad de sanciones y los IDs de los partidos en los que se sancionó al jugador.
+ *     tags: [Sanciones]
+ *     parameters:
+ *       - in: path
+ *         name: sanction_type_id
+ *         required: true
+ *         description: ID del tipo de sanción
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de los cinco jugadores con más sanciones por tipo de sanción
+ *         content:
+ *           application/json:
+ *             example:
+ *               data:
+ *                 - player_id: "12345"
+ *                   player_name: "John Doe"
+ *                   player_number: 10
+ *                   team_id: "54321"
+ *                   team_name: "Team A"
+ *                   team_logo: "logo_url"
+ *                   sanctions_count: 5
+ *                   match_ids: ["match1", "match2", "match3"]
+ *                 - player_id: "23456"
+ *                   player_name: "Jane Smith"
+ *                   player_number: 8
+ *                   team_id: "65432"
+ *                   team_name: "Team B"
+ *                   team_logo: "logo_url"
+ *                   sanctions_count: 4
+ *                   match_ids: ["match4", "match5"]
+ *               message: "Sanciones obtenidas con éxito."
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get('/getTopFiveSanctionsByType/:sanction_type_id', sanctionController.getTopFiveSanctionsByType);
 
 /**
  * @swagger

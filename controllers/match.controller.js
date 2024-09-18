@@ -1,4 +1,4 @@
-const { Match, Competition, Round, Team, State, Schedule, Result, Field, sequelize } = require('../models');
+const { Match, Competition, Round, Team, State, Schedule, Result, Field, Player, Goal, Sanction, sequelize } = require('../models');
 const logController = require("./log.controller");
 
 module.exports = {
@@ -509,4 +509,109 @@ module.exports = {
             return res.status(500).json({ data: null, message: 'Ocurrió un error al actualizar la información de múltiples partidos, ' + error.message });
         }
     },
+
+    async updateMatchResultInfo(req, res) {
+
+        const { match_id, home_team_id, away_team_id, home_team_score, away_team_score, home_global_score, away_global_score, goals, sanctions } = req.body;
+
+        if (!match_id || !home_team_id || !away_team_id || home_team_score == null || away_team_score == null || home_global_score == null || away_global_score == null) {
+            return res.status(200).json({ message: 'Parámetros faltantes o inválidos', data: null });
+        }
+
+        const transaction = await sequelize.transaction(); // Iniciar una transacción
+
+        try {
+            // Verificar que el partido (match_id) existe
+            const match = await Match.findByPk(match_id, { transaction: transaction });
+            if (!match) {
+                return res.status(200).json({ data: null, message: 'El partido no existe' });
+            }
+
+            // Verificar que los equipos existen y coinciden con el match_id
+            const homeTeam = await Team.findByPk(home_team_id, { transaction: transaction });
+            const awayTeam = await Team.findByPk(away_team_id, { transaction: transaction });
+
+            if (!homeTeam || !awayTeam) {
+                return res.status(200).json({ data: null, message: 'Uno o ambos equipos no existen' });
+            }
+
+            if (match.home_team_id !== home_team_id || match.away_team_id !== away_team_id) {
+                return res.status(200).json({ data: null, message: 'Los equipos no coinciden con el partido' });
+            }
+
+            // Determinar el estado de victoria basado en los puntajes globales y de equipo
+            const hasGlobalScore = home_global_score !== 0 || away_global_score !== 0;
+
+            const home_team_win_status = hasGlobalScore
+                ? home_global_score > away_global_score
+                : home_team_score > away_team_score;
+
+            const away_team_win_status = hasGlobalScore
+                ? away_global_score > home_global_score
+                : away_team_score > home_team_score;
+
+            // Actualizar los campos de la tabla "matches"
+            await match.update(
+                { home_team_win_status, away_team_win_status },
+                { transaction }
+            );
+
+            // Actualizar el estado a "Finalizado" en la tabla "schedules"
+            const finalState = await State.findOne({ where: { name: 'Finalizado' }, transaction: transaction });
+
+            if (!finalState) {
+                return res.status(200).json({ data: null, message: 'Estado "Finalizado" no encontrado' });
+            }
+
+            const schedule = await Schedule.findOne({ where: { match_id }, transaction: transaction });
+
+            if (schedule) {
+                await schedule.update({ states_id: finalState.id }, { transaction: transaction });
+            }
+
+            // Actualizar los campos en la tabla "results"
+            const result = await Result.findOne({ where: { match_id }, transaction: transaction });
+
+            if (result) {
+                await result.update({ home_team_score, away_team_score, home_global_score, away_global_score }, { transaction: transaction });
+            }
+
+            // Agregar goles en la tabla "goals"
+            if (goals && Array.isArray(goals)) {
+                for (const goal of goals) {
+                    const { player_id } = goal;
+                    // Verificar que el jugador sea parte del equipo y del partido
+                    const player = await Player.findByPk(player_id, { transaction: transaction });
+                    if (!player || (player.team_id !== home_team_id && player.team_id !== away_team_id)) {
+                        return res.status(200).json({ data: null, message: `El jugador ${player_id} no es parte de los equipos del partido` });
+                    }
+                    await Goal.create({ match_id, player_id }, { transaction: transaction });
+                }
+            }
+
+            // Agregar sanciones en la tabla "sanctions"
+            if (sanctions && Array.isArray(sanctions)) {
+                for (const sanction of sanctions) {
+                    const { player_id, sanction_type_id } = sanction;
+                    // Verificar que el jugador sea parte del equipo y del partido
+                    const player = await Player.findByPk(player_id, { transaction: transaction });
+                    if (!player || (player.team_id !== home_team_id && player.team_id !== away_team_id)) {
+                        return res.status(200).json({ data: null, message: `El jugador ${player_id} no es parte de los equipos del partido` });
+                    }
+                    await Sanction.create({ match_id, player_id, sanction_type_id }, { transaction: transaction });
+                }
+            }
+
+            // Confirmar la transacción
+            await transaction.commit();
+            res.status(200).json({ data: null, message: 'Información del partido actualizada con éxito' });
+
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Error al consumir updateMatchResultInfo: ', error);
+            logController.addLocal('match.controller', 'updateMatchResultInfo', 'Error al actualizar la información del resultado del partido: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al actualizar la información del resultado del partido, ' + error.message });
+        }
+    },
+
 };

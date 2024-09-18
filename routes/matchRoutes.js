@@ -391,7 +391,7 @@ router.get('/:id', matchController.getMatchById);
  *                         field_name:
  *                           type: string
  *                           example: Campo A
- *                         state_id:
+ *                         states_id:
  *                           type: string
  *                           example: 5e7d9f2a-7b2e-4d5c-8d6e-3f1a9b8c7d9e
  *                         start_time:
@@ -621,5 +621,102 @@ router.post('/addMultipleMatches', matchController.addMultipleMatches);
  *               message: "Error interno del servidor"
  */
 router.put('/updateMultipleMatches', matchController.updateMultipleMatches);
+
+/**
+ * @swagger
+ * /matches/updateMatchResultInfo:
+ *   put:
+ *     summary: Actualizar la información del resultado de un partido
+ *     description: Actualiza el resultado de un partido, incluyendo los goles y sanciones asociados.
+ *     tags: [Partidos]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               match_id:
+ *                 type: string
+ *                 description: ID del partido
+ *                 example: "550e8400-e29b-41d4-a716-446655440000"
+ *               home_team_id:
+ *                 type: string
+ *                 description: ID del equipo local
+ *                 example: "550e8400-e29b-41d4-a716-446655440111"
+ *               away_team_id:
+ *                 type: string
+ *                 description: ID del equipo visitante
+ *                 example: "550e8400-e29b-41d4-a716-446655440222"
+ *               home_team_score:
+ *                 type: integer
+ *                 description: Puntuación del equipo local en este partido
+ *                 example: 2
+ *               away_team_score:
+ *                 type: integer
+ *                 description: Puntuación del equipo visitante en este partido
+ *                 example: 1
+ *               home_global_score:
+ *                 type: integer
+ *                 description: Puntuación global acumulada del equipo local
+ *                 example: 5
+ *               away_global_score:
+ *                 type: integer
+ *                 description: Puntuación global acumulada del equipo visitante
+ *                 example: 3
+ *               goals:
+ *                 type: array
+ *                 description: Lista de goles anotados en el partido
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     player_id:
+ *                       type: string
+ *                       description: ID del jugador que anotó el gol
+ *                       example: "550e8400-e29b-41d4-a716-446655440333"
+ *               sanctions:
+ *                 type: array
+ *                 description: Lista de sanciones aplicadas en el partido
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     player_id:
+ *                       type: string
+ *                       description: ID del jugador sancionado
+ *                       example: "550e8400-e29b-41d4-a716-446655440444"
+ *                     sanction_type_id:
+ *                       type: string
+ *                       description: ID del tipo de sanción
+ *                       example: "550e8400-e29b-41d4-a716-446655440555"
+ *     responses:
+ *       200:
+ *         description: Respuesta exitosa
+ *         content:
+ *           application/json:
+ *             examples:
+ *               success:
+ *                 value:
+ *                   data:
+ *                     match_id: "550e8400-e29b-41d4-a716-446655440000"
+ *                     home_team_id: "550e8400-e29b-41d4-a716-446655440111"
+ *                     away_team_id: "550e8400-e29b-41d4-a716-446655440222"
+ *                     home_team_score: 2
+ *                     away_team_score: 1
+ *                     home_global_score: 5
+ *                     away_global_score: 3
+ *                     goals:
+ *                       - player_id: "550e8400-e29b-41d4-a716-446655440333"
+ *                     sanctions:
+ *                       - player_id: "550e8400-e29b-41d4-a716-446655440444"
+ *                         sanction_type_id: "550e8400-e29b-41d4-a716-446655440555"
+ *                   message: "Información del partido actualizada con éxito"
+ *       500:
+ *         description: Error en el servidor al actualizar el resultado
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Ocurrió un error al actualizar la información del resultado del partido"
+ */
+router.put('/updateMatchResultInfo', matchController.updateMatchResultInfo);
 
 module.exports = router;

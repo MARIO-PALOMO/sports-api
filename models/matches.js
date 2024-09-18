@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
         foreignKey: 'away_team_id', // Clave foránea en la tabla Match
         as: 'awayTeam', // Alias para la relación
       });
-      
+
       // Asociación con Schedule (Un partido puede tener varios horarios)
       this.hasOne(models.Schedule, {
         foreignKey: 'match_id', // Clave foránea en la tabla Schedule
@@ -120,6 +120,16 @@ module.exports = (sequelize) => {
           msg: 'La fecha del partido es requerida',
         },
       },
+    },
+    home_team_win_status: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: null,
+    },
+    away_team_win_status: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: null,
     },
   }, {
     sequelize,

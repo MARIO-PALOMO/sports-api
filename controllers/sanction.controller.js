@@ -422,5 +422,66 @@ module.exports = {
             return res.status(500).json({ data: null, message: 'Ocurrió un error al obtener las sanciones, ' + error.message });
         }
     },
+    
+    async addSanctionsByMatch(req, res) {
+
+        const { match_id, sanctions } = req.body;
+        
+        if (!match_id || !Array.isArray(sanctions) || sanctions.length === 0) {
+            return res.status(200).json({ data: null, message: 'El match_id es obligatorio y debe haber al menos una sanción en el listado.' });
+        }
+
+        try {
+            // Verificar que el partido existe
+            const match = await Match.findByPk(match_id);
+            if (!match) {
+                return res.status(200).json({ data: null, message: 'El match_id enviado: ' + match_id + ' no se ha encontrado.' });
+            }
+
+            // Verificar que todos los players y sanction_types existen en paralelo
+            const players = await Promise.all(sanctions.map(sanction => Player.findByPk(sanction.player_id)));
+            const sanctionTypes = await Promise.all(sanctions.map(sanction => SanctionType.findByPk(sanction.sanction_type_id)));
+
+            // Validar la existencia de jugadores y tipos de sanción
+            for (let i = 0; i < sanctions.length; i++) {
+                if (!players[i]) {
+                    return res.status(200).json({ data: null, message: `Jugador con ID ${sanctions[i].player_id} no encontrado.` });
+                }
+                if (!sanctionTypes[i]) {
+                    return res.status(200).json({ data: null, message: `Tipo de sanción con ID ${sanctions[i].sanction_type_id} no encontrado.` });
+                }
+            }
+
+            const transaction = await Sanction.sequelize.transaction();
+
+            try {
+                // Crear todas las sanciones en una transacción
+                await Promise.all(
+                    sanctions.map(sanction =>
+                        Sanction.create(
+                            {
+                                player_id: sanction.player_id,
+                                sanction_type_id: sanction.sanction_type_id,
+                                match_id: match_id,
+                                active: true, // Se puede ajustar según las necesidades
+                            },
+                            { transaction }
+                        )
+                    )
+                );
+                
+                await transaction.commit();
+                return res.status(200).json({ data: match_id, message: 'Sanciones creadas exitosamente.' });
+
+            } catch (error) {
+                await transaction.rollback();
+                throw error; // Lanzar el error para manejarlo en el siguiente bloque catch
+            }
+        } catch (error) {
+            console.error('Error al consumir addSanctionsByMatch: ', error);
+            logController.addLocal('sanction.controller', 'addSanctionsByMatch', 'Error al crear sanciones del partido: ' + error.message, JSON.stringify({ params: req.params, body: req.body }));
+            return res.status(500).json({ data: null, message: 'Ocurrió un error al crear las sanciones del partido, ' + error.message });
+        }
+    },
 
 };

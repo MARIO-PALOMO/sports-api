@@ -44,6 +44,14 @@ app.get('/pdf/reglamento-copa-wambras', (req, res) => {
     const filePath = path.join(__dirname, 'images/documents/reglamento_copa_wambras.pdf');
     res.sendFile(filePath);
 });
+app.get('/pdf/disclaimer-copa-wambras', (req, res) => {
+    const filePath = path.join(__dirname, 'images/documents/descargo_responsabilidad_copa_wambras.pdf');
+    res.sendFile(filePath);
+});
+app.get('/pdf/privacy-policy-copa-wambras', (req, res) => {
+    const filePath = path.join(__dirname, 'images/documents/política_privacidad_copa_wambras.pdf');
+    res.sendFile(filePath);
+});
 
 // Get the environment and database configuration
 const env = process.env.NODE_ENV || 'development';

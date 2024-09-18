@@ -293,4 +293,70 @@ router.get('/getSanctionsByTypeAndTeam/:sanction_type_id/:team_id', sanctionCont
  */
 router.get('/getSanctionsByTypeAndMatch/:sanction_type_id/:match_id', sanctionController.getSanctionsByTypeAndMatch);
 
+/**
+ * @swagger
+ * /sanctions/addSanctionsByMatch:
+ *   post:
+ *     summary: Agregar sanciones a un partido
+ *     description: Este endpoint permite agregar una o más sanciones a un partido específico. Cada sanción debe estar asociada a un jugador y a un tipo de sanción válidos.
+ *     tags: [Sanciones]
+ *     requestBody:
+ *       description: Datos necesarios para agregar sanciones a un partido.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               match_id:
+ *                 type: string
+ *                 format: uuid
+ *                 description: ID del partido al que se le van a agregar las sanciones.
+ *               sanctions:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     player_id:
+ *                       type: string
+ *                       format: uuid
+ *                       description: ID del jugador al que se le aplica la sanción.
+ *                     sanction_type_id:
+ *                       type: string
+ *                       format: uuid
+ *                       description: ID del tipo de sanción aplicada.
+ *                 example:
+ *                   - player_id: "e83b0c26-46b2-4a34-93d1-2b4e4b491c3c"
+ *                     sanction_type_id: "fcd2b52f-00b2-4f0d-8c1d-321ab01c94b3"
+ *                   - player_id: "b8f78d16-3c5b-4d1e-9b54-1b63f23754d0"
+ *                     sanction_type_id: "cc7a1ef9-c3bc-4b30-a34f-33f3f1b44a3c"
+ *     responses:
+ *       200:
+ *         description: Sanciones creadas exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: string
+ *                   example: "e83b0c26-46b2-4a34-93d1-2b4e4b491c3c"
+ *                 message:
+ *                   type: string
+ *                   example: "Sanciones creadas exitosamente."
+ *       500:
+ *         description: Ocurrió un error al crear las sanciones del partido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: null
+ *                 message:
+ *                   type: string
+ *                   example: "Ocurrió un error al crear las sanciones del partido, [detalle del error]."
+ */
+router.post('/addSanctionsByMatch', sanctionController.addSanctionsByMatch);
+
 module.exports = router;

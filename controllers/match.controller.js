@@ -604,7 +604,7 @@ module.exports = {
 
             // Confirmar la transacción
             await transaction.commit();
-            res.status(200).json({ data: null, message: 'Información del partido actualizada con éxito' });
+            res.status(200).json({ data: match_id, message: 'Información del partido actualizada con éxito' });
 
         } catch (error) {
             await transaction.rollback();

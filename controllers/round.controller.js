@@ -7,7 +7,7 @@ module.exports = {
     async getAll(req, res) {
         try {
             // Buscar todos los registros de Eliminatorias
-            const rounds = await Round.findAll();
+            const rounds = await Round.findAll({ order: [['code', 'DESC']] });
             return res.status(200).json({ message: 'Eliminatorias encontradas', data: rounds });
         } catch (error) {
             clog.addLocal("round.controller", "addRound", 'Error al consultar todas las eliminatorias: ' + error, JSON.stringify(req));

@@ -53,6 +53,18 @@ app.get('/pdf/privacy-policy-copa-wambras', (req, res) => {
     res.sendFile(filePath);
 });
 
+// Simplified HTML routes
+app.get('/information/privacy-policy-copa-wambras', (req, res) => {
+    const filePath = path.join(__dirname, 'images/html/política_privacidad_copa_wambras.html');
+    res.sendFile(filePath);
+});
+
+app.get('/information/disclaimer-copa-wambras', (req, res) => {
+    const filePath = path.join(__dirname, 'images/html/descargo_responsabilidad_copa_wambras.html');
+    res.sendFile(filePath);
+});
+
+
 // Get the environment and database configuration
 const env = process.env.NODE_ENV || 'development';
 console.log('Environment: ' + env);

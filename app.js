@@ -45,15 +45,16 @@ app.get('/pdf/reglamento-copa-wambras', (req, res) => {
     res.sendFile(filePath);
 });
 app.get('/pdf/disclaimer-copa-wambras', (req, res) => {
-    const filePath = path.join(__dirname, 'images/documents/descargo_responsabilidad_copa_wambras.pdf');
+    //const filePath = path.join(__dirname, 'images/documents/descargo_responsabilidad_copa_wambras.pdf');
+    const filePath = path.join(__dirname, 'images/html/descargo_responsabilidad_copa_wambras.html');
     res.sendFile(filePath);
 });
 app.get('/pdf/privacy-policy-copa-wambras', (req, res) => {
-    const filePath = path.join(__dirname, 'images/documents/política_privacidad_copa_wambras.pdf');
+    //const filePath = path.join(__dirname, 'images/documents/política_privacidad_copa_wambras.pdf');
+    const filePath = path.join(__dirname, 'images/html/política_privacidad_copa_wambras.html');
     res.sendFile(filePath);
 });
 
-// Simplified HTML routes
 app.get('/information/privacy-policy-copa-wambras', (req, res) => {
     const filePath = path.join(__dirname, 'images/html/política_privacidad_copa_wambras.html');
     res.sendFile(filePath);
